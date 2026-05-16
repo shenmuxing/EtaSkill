@@ -15,6 +15,8 @@ This page summarizes the reusable skills in MetaSkill and when to use them. Each
 | --- | --- | --- | --- |
 | Codex-DeepSeek Paper Protocol | `muxing-skills/codex-deepseek-paper-protocol/` | Coordinate Codex planning and review with DeepSeek manuscript drafting or revision. | Uses the companion DeepSeek calling skill and can include explicit style review. |
 | DeepSeek Agent | `muxing-skills/deepseek-agent/` | Delegate bounded writing or revision tasks to the DeepSeek CLI/TUI while Codex remains the controller. | Provides the operating contract and wrapper workflow for DeepSeek delegation. |
+| Literature Idea Planner | `muxing-skills/literature-idea-planner/` | Browse academic sources through the Codex Chrome plugin and write a `planNN.md` explaining which papers to borrow from for a research idea. | Plans only; PDF fetching and BibTeX creation belong to Literature Reference Builder. |
+| Literature Reference Builder | `muxing-skills/literature-reference-builder/` | Use a literature plan or paper list to fetch accessible PDFs and create or update `references.bib`. | Prefers published versions, uses arXiv as fallback, and records sources in `paper-sources.md`. |
 | Muxing Style Review | `muxing-skills/muxing-style-review/` | Run deterministic Markdown prose audits using implemented `agent-style` checks. | Keeps the public contract limited to implemented CLI-backed review behavior. |
 | Skill Creator | `muxing-skills/skill-creator/` | Create or update Codex skills. | Serves as a public-safe example of a fuller skill package with references, scripts, assets, and license text. |
 

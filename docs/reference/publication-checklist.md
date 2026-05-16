@@ -1,0 +1,28 @@
+# Publication Checklist
+
+Use this condensed checklist before publishing or promoting a skill.
+
+## Privacy
+
+- No private absolute paths.
+- No account names, emails, tokens, keys, service identifiers, or calendar details.
+- No unpublished project names, manuscript text, private notes, or reviewer comments.
+- No raw logs, traces, prompts, or outputs from private runs.
+
+## Contract
+
+- Folder name is lowercase hyphen-case.
+- `SKILL.md` frontmatter contains only `name` and `description`.
+- The description states concrete trigger situations.
+- The body gives operational instructions.
+- Unsupported behavior is marked as manual, optional, or out of scope.
+
+## Resources
+
+- `references/` files are used by the workflow.
+- `scripts/` helpers have been run when practical.
+- `assets/` files support actual output.
+- `agents/openai.yaml` matches `SKILL.md`.
+- No scaffold placeholders remain.
+
+For the fuller source checklist, see `publication-review/references/publication-checklist.md`.

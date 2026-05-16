@@ -1,0 +1,9 @@
+interface:
+  display_name: "Literature Idea Planner"
+  short_description: "Chrome-based academic idea search plans"
+  default_prompt: "Use $literature-idea-planner to browse for papers around this research idea and write a planNN.md with papers to borrow from."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "chrome"
+      description: "Codex Chrome plugin for Google, Google Scholar, publisher, and logged-in academic browsing."

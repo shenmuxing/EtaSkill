@@ -1,0 +1,9 @@
+interface:
+  display_name: "Literature Reference Builder"
+  short_description: "Fetch papers and build references.bib"
+  default_prompt: "Use $literature-reference-builder with this literature plan to fetch accessible PDFs and build references.bib."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "chrome"
+      description: "Codex Chrome plugin for Google, Google Scholar, publisher, and logged-in academic browsing."
