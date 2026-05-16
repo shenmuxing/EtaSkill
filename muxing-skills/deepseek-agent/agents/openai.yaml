@@ -1,0 +1,4 @@
+interface:
+  display_name: "DeepSeek Agent"
+  short_description: "Call DeepSeek as a writing agent"
+  default_prompt: "Use $deepseek-agent to delegate this writing task to DeepSeek and return the result."

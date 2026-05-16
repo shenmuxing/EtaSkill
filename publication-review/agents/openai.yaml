@@ -1,0 +1,4 @@
+interface:
+  display_name: "Publication Review"
+  short_description: "Review MetaSkill skills before publishing."
+  default_prompt: "Use $publication-review to audit a skill for public release readiness."

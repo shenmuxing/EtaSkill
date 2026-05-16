@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill Management"
+  short_description: "Manage, audit, standardize, and publish reusable Codex skills."
+  default_prompt: "Use this skill to inventory, standardize, test, and prepare reusable skills for a public MetaSkill repository."

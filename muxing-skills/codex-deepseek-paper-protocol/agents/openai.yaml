@@ -1,0 +1,7 @@
+interface:
+  display_name: "Codex DeepSeek Paper Protocol"
+  short_description: "Codex reviews while DeepSeek writes"
+  default_prompt: "Use $codex-deepseek-paper-protocol to coordinate Codex review and DeepSeek writing for this manuscript."
+
+policy:
+  allow_implicit_invocation: true
