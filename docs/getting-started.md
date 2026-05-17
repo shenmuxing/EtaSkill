@@ -8,7 +8,7 @@ MetaSkill is organized around skill lifecycle work. A typical task starts with a
 MetaSkill/
   skill-management/       lifecycle workflow for inventory, cleanup, validation, and migration
   publication-review/     publish-before-review workflow for privacy and truthful contracts
-  muxing-skills/          reusable public skills and examples
+  skill-examples/          reusable public skills and examples
   docs/                   documentation site source
 ```
 

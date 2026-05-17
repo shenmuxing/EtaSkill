@@ -8,7 +8,7 @@ MetaSkill/
   docs/
   skill-management/
   publication-review/
-  muxing-skills/
+  skill-examples/
 ```
 
 ## Root Files
@@ -21,7 +21,10 @@ MetaSkill/
 
 - `skill-management/` owns lifecycle workflows.
 - `publication-review/` owns publish-before-review checks.
-- `muxing-skills/` stores mature reusable skills and public-safe examples.
+- `skill-examples/` stores mature reusable skills and public-safe examples.
+- Reusable skill directories normally contain `SKILL.md` and `install.md`, plus
+  only the optional `agents/`, `references/`, `scripts/`, and `assets/`
+  directories they actually use.
 
 ## Documentation Source
 

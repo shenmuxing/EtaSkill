@@ -8,5 +8,5 @@ These tutorials are task-oriented guides. They show how to use the repository wo
 create-a-skill
 review-a-skill-before-publishing
 migrate-a-local-skill
-prepare-a-muxing-skill-for-public-release
+prepare-a-skill-example-for-public-release
 ```

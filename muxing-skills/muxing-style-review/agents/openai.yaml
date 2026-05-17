@@ -1,4 +1,0 @@
-interface:
-  display_name: "Muxing Style Review"
-  short_description: "Deterministic agent-style Markdown review"
-  default_prompt: "Use $muxing-style-review to audit this Markdown file with deterministic agent-style checks."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill Tester"
+  short_description: "Record skill test runs for debugging"
+  default_prompt: "Use $skill-tester to run a Codex skill test and write a local debug report."

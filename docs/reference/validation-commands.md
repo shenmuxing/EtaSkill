@@ -11,7 +11,7 @@ uv run --with sphinx --with sphinx-rtd-theme --with myst-parser sphinx-build -b 
 ## Review A Skill
 
 ```powershell
-uv run python .\publication-review\scripts\review_skill.py .\muxing-skills\example-skill
+uv run python .\publication-review\scripts\review_skill.py .\skill-examples\example-skill
 ```
 
 ## Validate A Skill Structure
@@ -19,8 +19,22 @@ uv run python .\publication-review\scripts\review_skill.py .\muxing-skills\examp
 When the validator is available:
 
 ```powershell
-uv run --with pyyaml python .\muxing-skills\skill-creator\scripts\quick_validate.py .\muxing-skills\example-skill
+uv run --with pyyaml python .\skill-examples\skill-creator\scripts\quick_validate.py .\skill-examples\example-skill
 ```
+
+## Validate Skill Example Installation
+
+Before publishing or after installing a skill example, run the read-only smoke
+checker. For reusable skills, also read the skill's `install.md` and run the
+verification steps documented there:
+
+```powershell
+python .\scripts\validate_muxing_install.py --source-only --skill deepseek-agent
+python .\scripts\validate_muxing_install.py --installed-only --skill deepseek-agent
+```
+
+Add `--deepseek-doctor` only when the active environment may run the DeepSeek
+account and network diagnostic.
 
 ## Search For Private Paths
 

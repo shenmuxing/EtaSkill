@@ -12,7 +12,7 @@ example-skill/
 
 ## 2. Add The Entrypoint
 
-Create `SKILL.md` with frontmatter containing only `name` and `description`.
+Create `SKILL.md` with frontmatter accepted by the system `skill-creator` validator. `name` and `description` are required; `metadata`, `license`, and `allowed-tools` are optional when they are actually needed.
 
 ```markdown
 ---
@@ -33,6 +33,12 @@ description: Use when the agent needs to demonstrate a generic reusable workflow
 
 Use `references/`, `scripts/`, and `assets/` only when they support the documented workflow.
 
-## 4. Validate Before Promotion
+## 4. Add install.md
+
+For reusable skills, add `install.md` with copy, dependency, install, update,
+verification, rollback, and notes sections. Use the template in
+`docs/reference/install-md-protocol.md`.
+
+## 5. Validate Before Promotion
 
 Run structure checks and publication review before adding the skill to the catalog.

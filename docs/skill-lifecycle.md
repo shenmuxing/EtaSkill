@@ -24,4 +24,4 @@ Run structure and privacy checks where available. For complex skills, also test 
 
 ## 6. Promotion
 
-Move mature skills into `muxing-skills/` only after publication review. Update the catalog and any routing documentation that depends on the skill.
+Move mature skills into `skill-examples/` only after publication review. Update the catalog and any routing documentation that depends on the skill.

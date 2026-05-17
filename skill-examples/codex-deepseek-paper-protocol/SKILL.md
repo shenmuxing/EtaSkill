@@ -1,6 +1,6 @@
 ---
 name: codex-deepseek-paper-protocol
-description: "Protocol-level two-agent paper writing workflow. Use when the user wants Codex to plan and review from global context while DeepSeek writes or revises the manuscript through the global deepseek-agent skill, with muxing-style-review used for explicit prose style checks."
+description: Protocol-level two-agent paper writing workflow. Use when the user wants Codex to plan and review from global context while DeepSeek writes or revises the manuscript through the global deepseek-agent skill, with muxing-style-review used for explicit prose style checks.
 ---
 
 # Codex-DeepSeek Paper Protocol
@@ -12,16 +12,11 @@ Use this skill to coordinate two agents for academic writing:
 - **K = 4** review-feedback rounds by default, unless the user specifies another value.
 - The concrete DeepSeek invocation is handled by the global `deepseek-agent` skill.
 
-This skill is a protocol, not a paper template. It defines how the agents cooperate.
+This skill is a protocol that defines how the agents cooperate.
 
 ## Required Companion Skill
 
-Use `deepseek-agent` whenever this protocol delegates to DeepSeek. In this
-repository it is published as `muxing-skills/deepseek-agent`; after installation,
-resolve it from the active skills directory.
-
-That skill owns the installed `deepseek` / `deepseek-tui` CLI mechanics, including:
-
+Use `@deepseek-agent` whenever this protocol delegates to DeepSeek.  That skill owns the installed `deepseek` / `deepseek-tui` CLI mechanics, including:
 - checking `deepseek doctor` when needed,
 - calling the bundled `deepseek-agent/scripts/invoke_deepseek.ps1` wrapper,
 - choosing `direct-edit`, `unified-diff`, `replacement-block`, or `answer-only`,
@@ -30,11 +25,15 @@ That skill owns the installed `deepseek` / `deepseek-tui` CLI mechanics, includi
 
 This protocol owns the brief, review, feedback loop, and integration judgment. Do not duplicate CLI calling details here beyond the delegation rules below.
 
-Use `muxing-style-review` for explicit post-hoc prose style checks during Codex
-review. In this repository it is published as `muxing-skills/muxing-style-review`;
-after installation, resolve it from the active skills directory.
-
-Invoke it as `@muxing-style-review` or `/muxing-style-review` depending on the active harness. Use `/muxing-style-review FILE` to audit one Markdown prose file, and `/muxing-style-review A.md B.md` to compare two drafts. Treat `muxing-style-review` findings as review evidence; do not let its polish step replace DeepSeek's authorship unless the user explicitly approves that reviewed copy.
+Use `muxing-style-review` as the style-control layer in two distinct modes.
+Before delegation, explicitly use the compact mode by loading
+`muxing-style-review/references/check-compact.md` and injecting only the
+relevant compact rule directives into the DeepSeek brief. After DeepSeek returns
+prose, explicitly request a complete/full `muxing-style-review` review. For
+non-trivial manuscript prose, use the skill's dedicated review-subagent option
+for the manual/model part of the full review when the active harness supports
+subagents. Treat the returned rule-level findings and revision brief as Codex
+review evidence; do not let the style review replace DeepSeek's authorship.
 
 ## Core Rule
 
@@ -97,23 +96,11 @@ DeepSeek should have room to choose wording, local paragraph order, examples, an
 
 ## Workflow
 
-### Step 0: Determine Scope
+### Step 1: Build Task Context
 
-Codex first determines:
+Codex first combines the user's intent with enough project context to make the task actionable. Determine the target writing unit, hard constraints, source materials, and assumptions only to the level needed for delegation.
 
-- target file(s),
-- target writing unit,
-- target language and style,
-- expected length,
-- source materials,
-- hard constraints,
-- unknowns or assumptions.
-
-If the user request is underspecified but safe assumptions are possible, Codex proceeds and records the assumptions in the DeepSeek brief. Ask the user only when the missing information would change the artifact materially.
-
-### Step 1: Build Global Context
-
-Codex reads project context before delegating. Prefer:
+Read relevant project context before delegating. Prefer:
 
 - current manuscript files,
 - outline or table of contents,
@@ -124,7 +111,9 @@ Codex reads project context before delegating. Prefer:
 - reviewer comments or TODOs,
 - prior drafts.
 
-Codex should not dump all context into DeepSeek. Select only what is necessary for the writing unit.
+Codex should not dump all context into DeepSeek. Select only what is necessary for the writing unit, and ask the user only when missing information would materially change the artifact.
+
+If DeepSeek may edit files directly, record the target file state before delegation so later review can distinguish intended changes from unrelated user edits.
 
 ### Step 2: Write the DeepSeek Brief
 
@@ -138,59 +127,29 @@ Every DeepSeek brief must include:
 6. **Must include**: claims, definitions, equations, examples, citations, or figures that must appear.
 7. **Must avoid**: fabricated results, invented citations, unsupported claims, author metadata, unexplained notation, excessive hype.
 8. **Freedom**: what DeepSeek may decide independently, such as wording, paragraph transitions, local organization, and explanatory examples.
-9. **Output contract**: direct edit, unified diff, or replacement block; include changed-file list.
-10. **Acceptance criteria**: concrete checks Codex will apply.
+9. **Output contract**: direct edit, unified diff, replacement block, or answer-only; include changed-file list when edits are allowed.
+10. **Style criteria**: compact `muxing-style-review` directives selected from `muxing-style-review/references/check-compact.md`, especially reader state, supported claims, calibrated claims, consistent terms, and concrete language.
+11. **Acceptance criteria**: concrete checks Codex will apply.
 
-The brief should constrain substance, not micromanage prose. Prefer "explain why X matters and connect it to Y" over sentence-level templates.
-
-### Step 2.5: Session Reuse Plan
-
-Before the first DeepSeek delegation for a bounded writing task, decide whether later rounds should reuse the same DeepSeek session.
-
-Default policy:
-
-- Start a fresh DeepSeek session for round 1 of each distinct manuscript task.
-- Reuse the same DeepSeek session for later review/revision rounds of that same task when doing so is likely to preserve useful draft context or improve provider-side prefix/cache behavior.
-- Do not reuse a session across different sections, different target files, materially different source contexts, or after a user-directed change of task.
-- Prefer `-ResumeSession <id-or-prefix>` when the previous round's session id is known.
-- Use `-Continue` only when no other DeepSeek task has run in this workspace since the prior round.
-
-Even when reusing a session, each revision brief must restate the active target files, output contract, non-negotiable constraints, and concrete issues to fix. Session reuse is an optimization, not a substitute for a complete revision brief.
+The brief should constrain substance without becoming a hidden draft. Give DeepSeek goals, facts, constraints, examples when needed, and acceptance criteria. For style criteria, use the compact mode only: read `muxing-style-review/references/check-compact.md`, select the directives relevant to the writing unit, and paste those concise directives into the brief. Do not paste `RULES.md`, `check-human.md`, or the full rule body into the DeepSeek writing prompt unless the user explicitly asks for that heavier context. Avoid full paragraph drafts, sentence-by-sentence outlines, exact phrasing unless preserving a required term, unnecessary rhetorical style commands, and large source dumps when a summary is enough.
 
 ### Step 3: Delegate to DeepSeek
 
-Use `deepseek-agent` to send the brief. Always use the standard invocation path: save the brief to a temporary or task-local Markdown file, have DeepSeek read that file, and require the artifact to be written to `-ResultFile`.
+Use `deepseek-agent` to send the brief. Save the brief to a temporary or task-local Markdown file, have DeepSeek read that file, and require the artifact to be written to `-ResultFile`.
 
-Invoke the global wrapper from the repository root:
+Session policy:
 
-```powershell
-$DeepSeekAgentSkill = Join-Path $env:CODEX_HOME 'skills\deepseek-agent'
-& (Join-Path $DeepSeekAgentSkill 'scripts\invoke_deepseek.ps1') `
-  -PromptFile .\path\to\deepseek-brief.md `
-  -Workspace . `
-  -Auto `
-  -UsePromptFileReference `
-  -ResultFile .\.agents\tmp\deepseek-result.md `
-  -Json `
-  -OutputFile .\.agents\tmp\deepseek-output.json `
-  -TranscriptFile .\.agents\tmp\deepseek-transcript.json `
-  -TimeoutSeconds 1800 `
-  -StreamIdleTimeoutSeconds 1200
-```
+- Start fresh for round 1 of each distinct manuscript task.
+- Reuse the same session for later rounds of that same task when useful.
+- Prefer `-ResumeSession <id-or-prefix>` when the session id is known.
+- Use `-Continue` only when no unrelated DeepSeek task has run in this workspace since the prior round.
+- Never reuse a session across materially different target files, sections, or source contexts.
 
-For later rounds of the same bounded task, add exactly one of the session reuse flags:
+Each revision brief must still restate the active target files, output contract, non-negotiable constraints, and concrete issues to fix. Session reuse is an optimization, not a substitute for a complete revision brief.
 
-```powershell
-  -ResumeSession <session-id-or-prefix> `
-```
+Use the standard wrapper path from `deepseek-agent` with `-Auto`, `-UsePromptFileReference`, `-ResultFile`, and structured output/transcript files. Add exactly one session reuse flag when needed: `-ResumeSession <id-or-prefix>`, or `-Continue` only under the safety condition above.
 
-or, only when it is safe to continue the latest workspace session:
-
-```powershell
-  -Continue `
-```
-
-In this protocol, `-Auto` means the DeepSeek process can read the saved brief and use workspace tools. It does not by itself grant permission to edit manuscript files. The output contract in the brief decides what DeepSeek may change, and Codex must verify the changed-file list afterward.
+In this protocol, `-Auto` means the DeepSeek process can read the saved brief and use workspace tools. It does not by itself grant permission to edit manuscript files. The output contract in the brief decides what DeepSeek may change.
 
 Choose the output contract before invoking:
 
@@ -205,17 +164,21 @@ If the DeepSeek calling skill does not exist yet, stop at a prepared brief and t
 
 ### Step 4: Codex Review
 
-Codex reviews DeepSeek output against the acceptance criteria and global context.
+Codex reviews DeepSeek output against the acceptance criteria and global context. Inspect changed files, verify only intended files changed, check formatting and references, run available compile or lint commands when appropriate, and avoid overwriting unrelated user edits.
 
-Run an explicit style check when DeepSeek returns prose in a Markdown-compatible file or extract:
+If DeepSeek returns a patch, Codex may apply the patch after review, but should not rewrite the manuscript content while applying it.
 
-1. If DeepSeek edited a Markdown manuscript file, call `@muxing-style-review` or `/muxing-style-review FILE`.
-2. If DeepSeek returned a replacement block or LaTeX-only prose, save only the prose-bearing excerpt to a temporary Markdown review file, then call `@muxing-style-review` or `/muxing-style-review` on that file.
-3. If comparing a previous draft with DeepSeek's revision, call `/muxing-style-review A.md B.md`.
-4. Record the rule-level findings and classify style issues as BLOCKER, MAJOR, or MINOR according to their manuscript impact.
-5. If style fixes are needed under this protocol, send a revision brief back through `deepseek-agent`; do not directly rewrite manuscript prose in Codex.
+Run an explicit complete/full `muxing-style-review` check when DeepSeek returns
+prose in a Markdown-compatible file or extract:
 
-If the active harness cannot invoke `@muxing-style-review` or `/muxing-style-review`, do not silently replace it with a weaker check. State that the muxing-style-review skill invocation is unavailable, run the strongest available fallback only as supporting evidence (for example `agent-style review --audit-only` on the extracted prose), and record which parts of the style review were skipped, especially semantic rules. Treat skipped semantic style checks as residual risk in the final report.
+1. If DeepSeek edited a Markdown manuscript file, call `@muxing-style-review` or `/muxing-style-review FILE` and explicitly request a complete/full check.
+2. If DeepSeek returned a replacement block or LaTeX-only prose, save only the prose-bearing excerpt to a temporary Markdown review file, then call `@muxing-style-review` or `/muxing-style-review` on that file and explicitly request a complete/full check.
+3. If comparing a previous draft with DeepSeek's revision, call `/muxing-style-review A.md B.md` and ask it to judge full-rule regressions and improvements, not only mechanical detector counts.
+4. For non-trivial complete/full reviews, ask `muxing-style-review` to use its dedicated review-subagent option when the active harness supports subagents and the user has not prohibited delegation. The parent Codex thread should provide the target excerpt, local reader, venue or book style, manuscript position, nearby definitions, notation, claims, citations, and reviewer comments needed to judge reader state, evidence, citation discipline, terminology, and manuscript fit.
+5. Keep the full rule body out of the parent DeepSeek-writing prompt. The full review may use `check-human.md`, `RULES.md`, and `subagent-review-prompt.md` inside the review path, but Codex should pass only the necessary excerpt and context instead of injecting the full rule contract into the main writing loop.
+6. In the parent Codex thread, inspect the subagent output instead of accepting it blindly. Merge it with automatic `agent-style review --audit-only` evidence when available, remove false positives, and add issues the subagent missed because it lacked local manuscript state.
+7. Record the rule-level findings and classify style issues as BLOCKER, MAJOR, or MINOR according to their manuscript impact.
+8. If style fixes are needed under this protocol, convert accepted findings into a DeepSeek revision brief, preferably using `muxing-style-review/references/revision-brief-template.md`; do not directly rewrite manuscript prose in Codex.
 
 Do not run `muxing-style-review` on raw LaTeX fragments when markup would dominate the audit. Extract prose or convert a bounded excerpt to Markdown first, preserving citations, equations, labels, and inline code as literal text where needed.
 
@@ -231,7 +194,7 @@ Use this review checklist:
 - Does the section connect to the previous and next manuscript units?
 - Is the output in the requested format?
 - Does it introduce any stale labels, duplicate labels, broken references, or TODO placeholders?
-- Does `muxing-style-review` flag agent-style violations that materially weaken clarity, tone, specificity, or structure?
+- Does `muxing-style-review` flag 21-rule style violations that materially weaken trust, reader state, evidence, citation discipline, terminology, clarity, or structure?
 
 Codex classifies issues as:
 
@@ -241,14 +204,14 @@ Codex classifies issues as:
 
 ### Step 5: Feedback Loop
 
-Run up to K rounds, default K = 4.
+Run up to K rounds.
 
 For each failed round:
 
 1. Codex writes a revision brief listing only the issues that must change.
 2. Codex preserves DeepSeek's valid choices instead of resetting the draft.
 3. Codex gives evidence from files or context for each requested change.
-4. DeepSeek revises through `deepseek-agent`, reusing the same session with `-ResumeSession` when the session id is known, or `-Continue` only when it is safe to continue the latest workspace session.
+4. DeepSeek revises through `deepseek-agent`, following the Step 3 session policy.
 5. Codex reviews again.
 
 Track the session identity for each task in the temporary task notes, transcript, or output metadata when available. If session identity cannot be recovered, keep the next revision brief self-contained and either start fresh or use `-Continue` only after confirming no unrelated DeepSeek invocation has occurred in this workspace.
@@ -276,42 +239,6 @@ Codex feedback to DeepSeek should be precise and actionable:
 - Bad: "Make it more rigorous."
 - Good: "The proof sketch uses `converges` without stating the topology or limit object. Add a sentence that identifies the convergence mode and points to the formal statement in Section 3. Do not introduce a new theorem."
 
-## Non-Overconstraint Rule
-
-Codex should give DeepSeek:
-
-- goals,
-- facts,
-- constraints,
-- examples when needed,
-- acceptance criteria.
-
-Codex should avoid giving:
-
-- full paragraph drafts,
-- sentence-by-sentence outlines,
-- exact phrasing unless preserving a required term,
-- unnecessary rhetorical style commands,
-- every possible source excerpt when a summary is enough.
-
-The purpose is to let DeepSeek write, while Codex maintains correctness and global coherence.
-
-## File Handling
-
-Before delegation, Codex records the target file state if edits are expected. After DeepSeek returns:
-
-- inspect changed files,
-- verify only intended files changed,
-- check formatting and references,
-- run available compile or lint commands when appropriate,
-- avoid overwriting unrelated user edits.
-
-If DeepSeek returns a patch, Codex may apply the patch, but should not rewrite the manuscript content while applying it.
-
-## Publication and Sharing Notes
-
-When this protocol or its companion skills are copied into a public repository, preserve the truthful behavior contract but remove personal absolute paths, account details, unpublished project names, private manuscript text, local transcripts, and one-off workspace logs. Prefer references to companion skill names, relative paths inside the skill package, or install-root variables such as `$env:CODEX_HOME`. Keep examples generic and reproducible, and do not add publication claims that are not implemented by the bundled skills or scripts.
-
 ## Final Response
 
 Codex reports:
@@ -320,6 +247,7 @@ Codex reports:
 - number of DeepSeek rounds used,
 - remaining issues by severity,
 - verification performed,
+- steps that failed, were skipped, or were unavailable, with concrete reasons,
 - whether the artifact is ready for the next workflow step.
 
 Keep the final response concise. Do not include the full DeepSeek brief unless the user asks for it.

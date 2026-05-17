@@ -1,0 +1,4 @@
+interface:
+  display_name: "Muxing Style Review"
+  short_description: "Complete or compact 21-rule prose review"
+  default_prompt: "Use $muxing-style-review to run a complete check on this technical prose: combine agent-style audit-only evidence with check-human.md manual rules, then produce actionable findings."
