@@ -164,7 +164,8 @@ Use `deepseek-agent` to send the brief. Always use the standard invocation path:
 Invoke the global wrapper from the repository root:
 
 ```powershell
-$DeepSeekAgentSkill = Join-Path $env:CODEX_HOME 'skills\deepseek-agent'
+$SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $HOME '.codex/skills' }
+$DeepSeekAgentSkill = Join-Path $SkillsRoot 'deepseek-agent'
 & (Join-Path $DeepSeekAgentSkill 'scripts\invoke_deepseek.ps1') `
   -PromptFile .\path\to\deepseek-brief.md `
   -Workspace . `

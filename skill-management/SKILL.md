@@ -26,6 +26,10 @@ Use this skill to turn useful local skill workflows into public, reusable, and t
    - Ensure the folder name is lowercase hyphen-case.
    - Ensure frontmatter contains only `name` and `description`.
    - Ensure optional resources are actually used.
+   - Ensure required companion skills, CLIs, app connectors, and bundled scripts
+     are explicit enough for a post-install agent check.
+   - Ensure installed path examples resolve from `$CODEX_HOME/skills`, with
+     `~/.codex/skills` as the fallback when `CODEX_HOME` is unset.
 5. Record the result.
    - Update collection-level documentation when a new category or convention is introduced.
    - Avoid adding per-skill README files unless explicitly required by the repository owner.
@@ -54,6 +58,12 @@ uv run --with pyyaml python .\muxing-skills\skill-creator\scripts\quick_validate
 ```
 
 If the repository sample is unavailable, use an installed `skill-creator` validator without committing machine-specific absolute paths.
+
+For muxing skills, also run the installation smoke checker in source mode:
+
+```powershell
+python .\scripts\validate_muxing_install.py --source-only --skill deepseek-agent
+```
 
 ## Output Expectations
 

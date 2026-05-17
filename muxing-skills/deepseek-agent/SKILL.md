@@ -16,13 +16,26 @@ Verify the CLI only when the current session has not already done so:
 ```powershell
 deepseek --version
 deepseek-tui --version
+# Run one of these, depending on the host:
+pwsh -NoProfile -Command '$PSVersionTable.PSVersion'
+powershell -NoProfile -Command '$PSVersionTable.PSVersion'
 deepseek doctor
 ```
 
 `deepseek` and `deepseek-tui` should be available on `PATH`, or the caller should
 pass the wrapper's `-Binary` parameter with the target executable name or path.
+The bundled wrapper is a PowerShell script, so either `pwsh` or Windows
+PowerShell must be available to run it.
 
 If `deepseek doctor` reports missing credentials or API connectivity failure, stop and report the blocker. Do not substitute Codex-authored manuscript prose for the DeepSeek delegation.
+
+When resolving this installed skill, use `$env:CODEX_HOME` when present and
+fall back to the default Codex skills root when it is unset:
+
+```powershell
+$SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $HOME '.codex/skills' }
+$DeepSeekAgentSkill = Join-Path $SkillsRoot 'deepseek-agent'
+```
 
 ## Invocation
 
@@ -31,7 +44,8 @@ skill directory, and invoke it from the repository root so relative workspace
 paths still resolve correctly:
 
 ```powershell
-$DeepSeekAgentSkill = Join-Path $env:CODEX_HOME 'skills\deepseek-agent'
+$SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $HOME '.codex/skills' }
+$DeepSeekAgentSkill = Join-Path $SkillsRoot 'deepseek-agent'
 & (Join-Path $DeepSeekAgentSkill 'scripts\invoke_deepseek.ps1') `
   -PromptFile .\path\to\brief.md `
   -Workspace . `
@@ -48,14 +62,16 @@ $DeepSeekAgentSkill = Join-Path $env:CODEX_HOME 'skills\deepseek-agent'
 For CLI diagnostics only, direct prompt text is acceptable:
 
 ```powershell
-$DeepSeekAgentSkill = Join-Path $env:CODEX_HOME 'skills\deepseek-agent'
+$SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $HOME '.codex/skills' }
+$DeepSeekAgentSkill = Join-Path $SkillsRoot 'deepseek-agent'
 & (Join-Path $DeepSeekAgentSkill 'scripts\invoke_deepseek.ps1') -Prompt "Return OK only." -Workspace .
 ```
 
 Do not pass the whole brief through `exec` stdout. Save the brief in the workspace, let DeepSeek read it with tools, and require the artifact to be written to a file:
 
 ```powershell
-$DeepSeekAgentSkill = Join-Path $env:CODEX_HOME 'skills\deepseek-agent'
+$SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $HOME '.codex/skills' }
+$DeepSeekAgentSkill = Join-Path $SkillsRoot 'deepseek-agent'
 & (Join-Path $DeepSeekAgentSkill 'scripts\invoke_deepseek.ps1') `
   -PromptFile .\path\to\brief.md `
   -Workspace . `
@@ -87,7 +103,8 @@ For round 1 of a task, start fresh and save the transcript/output. For later rou
 Example revision round:
 
 ```powershell
-$DeepSeekAgentSkill = Join-Path $env:CODEX_HOME 'skills\deepseek-agent'
+$SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $HOME '.codex/skills' }
+$DeepSeekAgentSkill = Join-Path $SkillsRoot 'deepseek-agent'
 & (Join-Path $DeepSeekAgentSkill 'scripts\invoke_deepseek.ps1') `
   -PromptFile .\.agents\tmp\deepseek-revision-brief.md `
   -Workspace . `

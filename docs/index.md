@@ -38,3 +38,23 @@ development
 faq
 changelog
 ```
+
+## Citation
+
+If you use MetaSkill in public work, cite the project as:
+
+```text
+MetaSkill contributors. (2026). MetaSkill: Reusable AI-agent skill management workflows. GitHub. https://github.com/shenmuxing/MetaSkill
+```
+
+BibTeX:
+
+```bibtex
+@misc{metaskill2026,
+  author = {{MetaSkill contributors}},
+  title = {MetaSkill: Reusable AI-agent skill management workflows},
+  year = {2026},
+  howpublished = {\url{https://github.com/shenmuxing/MetaSkill}},
+  note = {Reusable public-safe skill management workflows and selected AI-agent skills}
+}
+```

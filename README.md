@@ -39,3 +39,23 @@ MetaSkill currently targets Codex skills by default. Compatibility with other ag
 ## Status
 
 This repository is in its initial curation phase. The current priority is to keep the public contract, directory layout, documentation, and publication rules stable as reusable skills are imported.
+
+## Citation
+
+If you use MetaSkill in public work, cite the project as:
+
+```text
+MetaSkill contributors. (2026). MetaSkill: Reusable AI-agent skill management workflows. GitHub. https://github.com/shenmuxing/MetaSkill
+```
+
+BibTeX:
+
+```bibtex
+@misc{metaskill2026,
+  author = {{MetaSkill contributors}},
+  title = {MetaSkill: Reusable AI-agent skill management workflows},
+  year = {2026},
+  howpublished = {\url{https://github.com/shenmuxing/MetaSkill}},
+  note = {Reusable public-safe skill management workflows and selected AI-agent skills}
+}
+```

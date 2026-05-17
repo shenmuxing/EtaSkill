@@ -9,5 +9,6 @@ repository-layout
 skill-contract
 metadata
 validation-commands
+installation-checks
 publication-checklist
 ```

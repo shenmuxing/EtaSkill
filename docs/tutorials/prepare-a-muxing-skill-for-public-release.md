@@ -10,7 +10,15 @@
 4. Examples use generic fixtures.
 5. Included resources are referenced by the workflow.
 6. Unsupported behavior is marked as manual, optional, or out of scope.
-7. Publication review has no blockers.
+7. Companion skills, external CLIs, app connectors, and bundled scripts are
+   named clearly enough for an installing agent to verify them.
+8. Installed path examples use `$CODEX_HOME` with a `~/.codex/skills` fallback.
+9. Publication review has no blockers.
+10. The source package passes:
+
+```powershell
+python .\scripts\validate_muxing_install.py --source-only --skill <skill-name>
+```
 
 ## Catalog Update
 

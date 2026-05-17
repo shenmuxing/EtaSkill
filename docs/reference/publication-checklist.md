@@ -25,4 +25,14 @@ Use this condensed checklist before publishing or promoting a skill.
 - `agents/openai.yaml` matches `SKILL.md`.
 - No scaffold placeholders remain.
 
+## Installation Readiness
+
+- Companion skills are named and checked.
+- External CLIs are named and have a harmless smoke check when practical.
+- Codex app connector dependencies are marked as manual checks.
+- Installed path examples work with `$CODEX_HOME` and with the default
+  `~/.codex/skills` fallback.
+- `scripts/validate_muxing_install.py --source-only --skill <skill-name>` passes
+  or any warnings are documented.
+
 For the fuller source checklist, see `publication-review/references/publication-checklist.md`.

@@ -22,6 +22,19 @@ When the validator is available:
 uv run --with pyyaml python .\muxing-skills\skill-creator\scripts\quick_validate.py .\muxing-skills\example-skill
 ```
 
+## Validate Muxing Skill Installation
+
+Before publishing or after installing a muxing skill, run the read-only smoke
+checker:
+
+```powershell
+python .\scripts\validate_muxing_install.py --source-only --skill deepseek-agent
+python .\scripts\validate_muxing_install.py --installed-only --skill deepseek-agent
+```
+
+Add `--deepseek-doctor` only when the active environment may run the DeepSeek
+account and network diagnostic.
+
 ## Search For Private Paths
 
 Use targeted searches before publication:
