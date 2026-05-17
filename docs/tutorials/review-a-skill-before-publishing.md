@@ -13,7 +13,7 @@ Read:
 ## 2. Run The Checker
 
 ```powershell
-uv run python .\publication-review\scripts\review_skill.py .\muxing-skills\example-skill
+uv run python .\publication-review\scripts\review_skill.py .\skill-examples\example-skill
 ```
 
 ## 3. Apply Manual Checks

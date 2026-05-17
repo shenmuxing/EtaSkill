@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate source and installed muxing skills.
+"""Validate source and installed skill examples.
 
 This is a post-install smoke checker for agents that install skills from this
 repository. It intentionally does not install external CLIs or modify user
@@ -27,9 +27,23 @@ KNOWN_SKILLS = (
     "literature-reference-builder",
     "muxing-style-review",
     "skill-creator",
+    "skill-installer",
+    "skill-tester",
+    "style-review",
 )
 
-ALLOWED_FRONTMATTER_KEYS = {"name", "description"}
+ALLOWED_FRONTMATTER_KEYS = {"name", "description", "license", "allowed-tools", "metadata"}
+
+INSTALL_MD_HEADINGS = (
+    "# Installation",
+    "## Copy",
+    "## Dependencies",
+    "## Install Steps",
+    "## Update Steps",
+    "## Verification",
+    "## Rollback",
+    "## Notes",
+)
 
 SKILL_DEPENDENCIES = {
     "codex-deepseek-paper-protocol": {
@@ -47,7 +61,23 @@ SKILL_DEPENDENCIES = {
         "connectors": ("chrome",),
     },
     "muxing-style-review": {
+        "skills": ("style-review",),
         "commands": ("agent-style",),
+        "files": (
+            "references/RULES.md",
+            "references/check-human.md",
+            "references/check-compact.md",
+            "references/subagent-review-prompt.md",
+            "references/revision-brief-template.md",
+            "references/rule-detectors.md",
+        ),
+    },
+    "style-review": {
+        "commands": ("agent-style",),
+        "files": (
+            "references/revision-prompt.md",
+            "references/rule-detectors.md",
+        ),
     },
     "skill-creator": {
         "files": (
@@ -57,10 +87,19 @@ SKILL_DEPENDENCIES = {
             "references/openai_yaml.md",
         ),
     },
+    "skill-installer": {
+        "files": (
+            "install.md",
+            "scripts/github_utils.py",
+            "scripts/install-skill-from-github.py",
+            "scripts/list-skills.py",
+        ),
+    },
+    "skill-tester": {},
 }
 
 PRIVATE_PATTERN = re.compile(
-    r"(/Users/|/home/|[A-Za-z]:\\\\|api[_-]?key|access[_-]?token|bearer\s+[A-Za-z0-9._-]+|secret|password)",
+    r"(/Users/|/home/|[A-Za-z]:\\\\|api[_-]?key|access[_-]?token|bearer\s+[A-Za-z0-9._-]+|\b(?:secret|password)\b\s*[:=])",
     re.IGNORECASE,
 )
 
@@ -91,6 +130,8 @@ def parse_frontmatter(skill_md: Path) -> tuple[dict[str, str], str | None]:
     data: dict[str, str] = {}
     for line in raw.splitlines():
         if not line.strip():
+            continue
+        if line.startswith((" ", "\t")):
             continue
         if ":" not in line:
             return {}, f"Unsupported frontmatter line: {line}"
@@ -150,6 +191,31 @@ def check_source_skill(skill_dir: Path, expected_name: str) -> list[CheckResult]
     for rel in SKILL_DEPENDENCIES.get(skill, {}).get("files", ()):
         if not (skill_dir / rel).exists():
             results.append(CheckResult("fail", "source", skill, f"missing packaged file: {rel}"))
+
+    install_md = skill_dir / "install.md"
+    if install_md.exists():
+        install_text = install_md.read_text(encoding="utf-8")
+        missing_headings = [
+            heading for heading in INSTALL_MD_HEADINGS if heading not in install_text
+        ]
+        if missing_headings:
+            results.append(
+                CheckResult(
+                    "fail",
+                    "source",
+                    skill,
+                    "install.md is missing heading(s): " + ", ".join(missing_headings),
+                )
+            )
+    else:
+        results.append(
+            CheckResult(
+                "warn",
+                "source",
+                skill,
+                "missing install.md; reusable MetaSkill skills should document install, update, verification, and rollback steps",
+            )
+        )
 
     private_hits = []
     for path in iter_text_files(skill_dir):
@@ -217,6 +283,10 @@ def check_installed_skill(
         ]
     if not (installed / "SKILL.md").exists():
         results.append(CheckResult("fail", "installed", skill, "installed skill is missing SKILL.md"))
+    if (installed / "install.md").exists():
+        results.append(CheckResult("pass", "installed", skill, "install.md present"))
+    else:
+        results.append(CheckResult("warn", "installed", skill, "install.md not present"))
 
     for required in SKILL_DEPENDENCIES.get(skill, {}).get("skills", ()):
         if (skills_root / required / "SKILL.md").exists():
@@ -288,7 +358,7 @@ def print_text(results: list[CheckResult]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source-root", default="muxing-skills", help="path to the source muxing-skills directory")
+    parser.add_argument("--source-root", default="skill-examples", help="path to the source skill-examples directory")
     parser.add_argument("--skills-root", default=str(default_skills_root()), help="installed Codex skills directory")
     parser.add_argument("--skill", action="append", choices=KNOWN_SKILLS, help="skill name to check; repeatable")
     parser.add_argument("--source-only", action="store_true", help="validate source packages only")
