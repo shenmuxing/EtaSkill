@@ -36,6 +36,10 @@ MetaSkill/
 
 MetaSkill currently targets Codex skills by default. Compatibility with other agents' skill formats is not planned at this stage.
 
+## Authorship and Scope
+
+MetaSkill is authored and maintained by Muxing Shen. The repository is released as a public-safe, reusable workflow and skill-management project. It does not include private project materials, personal machine configuration, unpublished research drafts, or institutional confidential content.
+
 ## Status
 
 This repository is in its initial curation phase. The current priority is to keep the public contract, directory layout, documentation, and publication rules stable as reusable skills are imported.
@@ -45,17 +49,20 @@ This repository is in its initial curation phase. The current priority is to kee
 If you use MetaSkill in public work, cite the project as:
 
 ```text
-MetaSkill contributors. (2026). MetaSkill: Reusable AI-agent skill management workflows. GitHub. https://github.com/shenmuxing/MetaSkill
+Shen, M. (2026). MetaSkill: Reusable AI-agent skill management workflows (v0.1.0) [Computer software]. GitHub. https://github.com/shenmuxing/MetaSkill
 ```
 
 BibTeX:
 
 ```bibtex
-@misc{metaskill2026,
-  author = {{MetaSkill contributors}},
+@software{shen_metaskill_2026,
+  author = {Shen, Muxing},
   title = {MetaSkill: Reusable AI-agent skill management workflows},
   year = {2026},
-  howpublished = {\url{https://github.com/shenmuxing/MetaSkill}},
-  note = {Reusable public-safe skill management workflows and selected AI-agent skills}
+  version = {0.1.0},
+  license = {MPL-2.0},
+  url = {https://github.com/shenmuxing/MetaSkill}
 }
 ```
+
+A Zenodo DOI should be added here after the first archived GitHub release is published.

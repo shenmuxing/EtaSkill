@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use MetaSkill, please cite it as below."
+title: "MetaSkill: Reusable AI-agent skill management workflows"
+authors:
+  - family-names: "Shen"
+    given-names: "Muxing"
+version: 0.1.0
+date-released: 2026-05-25
+repository-code: "https://github.com/shenmuxing/MetaSkill"
+url: "https://github.com/shenmuxing/MetaSkill"
+license: MPL-2.0
+abstract: "MetaSkill is a public-safe repository for managing, standardizing, testing, and publishing reusable AI-agent skills."
+keywords:
+  - AI agents
+  - skills
+  - workflow management
+  - reusable software

@@ -1,6 +1,6 @@
 project = "MetaSkill"
-author = "MetaSkill contributors"
-copyright = "2026, MetaSkill contributors"
+author = "Muxing Shen"
+copyright = "2026, Muxing Shen"
 
 extensions = [
     "myst_parser",
