@@ -9,6 +9,9 @@ date-released: 2026-05-25
 repository-code: "https://github.com/shenmuxing/MetaSkill"
 url: "https://github.com/shenmuxing/MetaSkill"
 license: MPL-2.0
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.20378925"
 abstract: "MetaSkill is a public-safe repository for managing, standardizing, testing, and publishing reusable AI-agent skills."
 keywords:
   - AI agents

@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-No unreleased changes yet.
+- Added the Zenodo DOI for the archived v0.1.0 release.
 
 ## 0.1.0 - 2026-05-25
 

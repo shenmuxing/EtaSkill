@@ -44,7 +44,7 @@ changelog
 If you use MetaSkill in public work, cite the project as:
 
 ```text
-Shen, M. (2026). MetaSkill: Reusable AI-agent skill management workflows (v0.1.0) [Computer software]. GitHub. https://github.com/shenmuxing/MetaSkill
+Shen, M. (2026). MetaSkill: Reusable AI-agent skill management workflows (v0.1.0) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.20378925
 ```
 
 BibTeX:
@@ -55,9 +55,9 @@ BibTeX:
   title = {MetaSkill: Reusable AI-agent skill management workflows},
   year = {2026},
   version = {0.1.0},
+  publisher = {Zenodo},
+  doi = {10.5281/zenodo.20378925},
   license = {MPL-2.0},
-  url = {https://github.com/shenmuxing/MetaSkill}
+  url = {https://doi.org/10.5281/zenodo.20378925}
 }
 ```
-
-A Zenodo DOI should be added here after the first archived GitHub release is published.
