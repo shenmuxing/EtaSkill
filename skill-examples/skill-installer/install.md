@@ -66,4 +66,3 @@ python .\skill-examples\skill-installer\scripts\list-skills.py --format json
   It does not silently install external tools, configure credentials, or verify
   authenticated app connectors.
 - Network access is required for GitHub listing or installation commands.
-

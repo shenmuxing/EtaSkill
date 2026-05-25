@@ -56,4 +56,3 @@ The installed check reports Chrome as a manual connector check.
 
 - Generic unauthenticated web search is not an equivalent substitute when the
   skill requires Chrome for logged-in academic access or Google Scholar behavior.
-

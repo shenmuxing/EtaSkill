@@ -62,4 +62,3 @@ python .\scripts\validate_muxing_install.py --installed-only --skill skill-creat
 
 - Do not commit generated private examples, local paths, or placeholder
   scaffolding created while testing this skill.
-

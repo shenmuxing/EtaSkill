@@ -64,4 +64,3 @@ python .\scripts\validate_muxing_install.py --installed-only --skill deepseek-ag
   delegation, not a reason to replace the workflow with Codex-authored prose.
 - The bundled PowerShell wrapper is part of the installed package and should be
   resolved from the active skills root.
-

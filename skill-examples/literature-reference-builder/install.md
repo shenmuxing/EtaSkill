@@ -56,4 +56,3 @@ The installed check reports Chrome as a manual connector check.
 
 - This skill must not bypass paywalls or access controls. Unavailable papers
   should be recorded as unresolved rather than fetched through dubious mirrors.
-

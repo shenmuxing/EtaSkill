@@ -53,4 +53,3 @@ python .\scripts\validate_muxing_install.py --installed-only --skill skill-teste
 - Reports created by this skill are local debugging artifacts. Do not commit
   private report contents unless the user explicitly requests a sanitized
   public fixture.
-

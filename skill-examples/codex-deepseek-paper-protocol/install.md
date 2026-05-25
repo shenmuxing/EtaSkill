@@ -56,4 +56,3 @@ python .\scripts\validate_muxing_install.py --installed-only --skill codex-deeps
   mechanics and account diagnostics.
 - Do not substitute Codex-authored manuscript prose when a required companion
   skill is unavailable.
-

@@ -105,4 +105,3 @@ The sections have these responsibilities:
 - Manual connector or credential checks must be reported as warnings or
   blockers, not silently skipped.
 ```
-
