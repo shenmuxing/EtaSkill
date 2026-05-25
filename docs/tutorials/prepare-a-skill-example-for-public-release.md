@@ -1,11 +1,11 @@
-# Prepare A Muxing Skill For Public Release
+# Prepare A Skill Example For Public Release
 
-`muxing-skills/` contains reusable public skills and examples. A skill belongs there only after it has been generalized beyond a private workflow.
+`skill-examples/` contains reusable public skills and examples. A skill belongs there only after it has been generalized beyond a private workflow.
 
 ## Checklist
 
 1. The skill name is lowercase hyphen-case.
-2. `SKILL.md` frontmatter contains only `name` and `description`.
+2. `SKILL.md` frontmatter follows the system `skill-creator` validator; `name` and `description` are required.
 3. The description states when to use the skill.
 4. Examples use generic fixtures.
 5. Included resources are referenced by the workflow.

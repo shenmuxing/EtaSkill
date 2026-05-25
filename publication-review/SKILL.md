@@ -1,6 +1,6 @@
 ---
 name: publication-review
-description: Review MetaSkill skills before publication for privacy, public-safe examples, frontmatter and folder standards, truthful capability claims, and resource consistency. Use before moving a skill into muxing-skills, publishing a skill, importing a local skill into MetaSkill, or responding to requests for public-readiness review.
+description: Review MetaSkill skills before publication for privacy, public-safe examples, frontmatter and folder standards, truthful capability claims, and resource consistency. Use before moving a skill into skill-examples, publishing a skill, importing a local skill into MetaSkill, or responding to requests for public-readiness review.
 ---
 
 # Publication Review
@@ -27,7 +27,7 @@ uv run python .\publication-review\scripts\review_skill.py <path-to-skill>
 ## Review Focus
 
 - Privacy: no private paths, accounts, service identifiers, unpublished content, personal notes, or operational logs.
-- Structure: `SKILL.md` frontmatter contains only `name` and `description`; folder names use lowercase hyphen-case; optional directories are used by the skill.
+- Structure: `SKILL.md` frontmatter follows the system `skill-creator` validator; folder names use lowercase hyphen-case; optional directories are used by the skill.
 - Contract truthfulness: every promised behavior is implemented, delegated to included scripts/resources, or explicitly labeled as manual or optional.
 - Public examples: examples use generic fixtures such as `example-skill`, `sample-project`, or `private-workspace`.
 - Metadata: `agents/openai.yaml`, when present, matches the skill body and does not introduce unsupported claims.

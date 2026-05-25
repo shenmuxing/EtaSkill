@@ -1,9 +1,10 @@
 # Installation Checks
 
 Skill installation has two phases: copying the skill package and validating that
-the active agent can actually use it. The system `skill-installer` covers the
-copy phase for GitHub-hosted skills; MetaSkill skills must document and validate
-their own post-install readiness.
+the active agent can actually use it. `install.md` is the per-skill contract for
+dependencies, update steps, verification, and rollback. The installer can copy
+the package and surface this file, but the installing agent must complete the
+documented checks before declaring the skill ready.
 
 ## Installing Agent Checklist
 
@@ -13,20 +14,21 @@ After copying a skill into the active skills root:
    `~/.codex/skills` when `CODEX_HOME` is unset.
 2. Confirm the installed directory name matches the `SKILL.md` frontmatter
    `name`.
-3. Confirm referenced bundled files exist, especially `scripts/`, `references/`,
+3. Read `install.md` when present and follow its verification section.
+4. Confirm referenced bundled files exist, especially `scripts/`, `references/`,
    and `assets/` files named by the workflow.
-4. Confirm companion skills are also installed when the skill delegates to them.
-5. Confirm external CLIs are available on `PATH`; run `--version` or a harmless
+5. Confirm companion skills are also installed when the skill delegates to them.
+6. Confirm external CLIs are available on `PATH`; run `--version` or a harmless
    smoke command when practical.
-6. Confirm required Codex app connectors are installed and usable when the skill
+7. Confirm required Codex app connectors are installed and usable when the skill
    depends on authenticated browser, calendar, mail, drive, or GitHub access.
-7. Run optional account or network diagnostics only when the skill asks for them
+8. Run optional account or network diagnostics only when the skill asks for them
    and the environment is allowed to perform that check.
-8. Report unresolved dependencies as blockers. Do not replace a missing
+9. Report unresolved dependencies as blockers. Do not replace a missing
    dependency with a different workflow unless the skill explicitly allows that
    fallback.
 
-## Muxing Skill Smoke Checker
+## Skill Example Smoke Checker
 
 Run from the repository root:
 

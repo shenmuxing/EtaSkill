@@ -14,6 +14,7 @@ Start with:
 - [Skill Lifecycle](docs/skill-lifecycle.md)
 - [Public-Safety Policy](docs/public-safety.md)
 - [Skill Catalog](docs/skills.md)
+- [install.md Protocol](docs/reference/install-md-protocol.md)
 - [Publication Checklist](docs/reference/publication-checklist.md)
 
 Build the documentation locally:
@@ -29,7 +30,7 @@ MetaSkill/
   docs/                 documentation site source
   skill-management/     lifecycle workflow for reusable skills
   publication-review/   publish-before-review workflow
-  muxing-skills/        reusable public skills and examples
+  skill-examples/        reusable public skills and examples
 ```
 
 ## Scope

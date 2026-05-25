@@ -1,12 +1,12 @@
 # MetaSkill Collaboration Guide
 
-MetaSkill is a public repository for reusable skill management workflows and selected Muxing-tuned skills. Treat this repository as publishable by default: keep private machine paths, personal notes, account names, unpublished project details, and one-off local workarounds out of tracked files.
+MetaSkill is a public repository for reusable skill management workflows and public skill examples. Treat this repository as publishable by default: keep private machine paths, personal notes, account names, unpublished project details, and one-off local workarounds out of tracked files.
 
 ## Skill Routing
 
 - `skill-management/` is the first-class skill for managing skills. It owns inventory, audit, standardization, testing, and publication-readiness workflows.
 - `publication-review/` owns publish-before-review checks for privacy, structure, and truthful skill contracts. Use it before moving or publishing any skill.
-- `muxing-skills/` contains reusable public skills and examples, including Muxing-refined skills once generalized.
+- `skill-examples/` contains reusable public skills and examples, including generalized Muxing-refined workflows.
 - Root documentation explains routing only. Detailed procedural rules belong in the relevant skill's `SKILL.md`, `references/`, or `scripts/`.
 
 ## Repository Boundaries

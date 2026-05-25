@@ -34,9 +34,24 @@ PRIVATE_PATTERNS = [
     ("email_address", re.compile(r"\b[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,}\b")),
     (
         "secret_assignment",
-        re.compile(r"\b(?:api[_-]?key|token|secret|password)\b\s*[:=]", re.IGNORECASE),
+        re.compile(
+            r"\b(?:api[_-]?key|token|secret|password)\b\s*[:=]\s*['\"]"
+            r"(?!<|example|your-|test-|dummy|token['\"]|secret['\"]|password['\"])",
+            re.IGNORECASE,
+        ),
     ),
 ]
+
+INSTALL_MD_HEADINGS = (
+    "# Installation",
+    "## Copy",
+    "## Dependencies",
+    "## Install Steps",
+    "## Update Steps",
+    "## Verification",
+    "## Rollback",
+    "## Notes",
+)
 
 
 def read_text(path: Path) -> str:
@@ -85,7 +100,7 @@ def review_skill(root: Path) -> tuple[list[str], list[str]]:
     if error:
         blockers.append(error)
     else:
-        allowed = {"name", "description"}
+        allowed = {"name", "description", "license", "allowed-tools", "metadata"}
         unexpected = [key for key in keys if key not in allowed]
         missing = [key for key in ("name", "description") if key not in values]
         if unexpected:
@@ -114,6 +129,8 @@ def review_skill(root: Path) -> tuple[list[str], list[str]]:
         rel = file_path.relative_to(root)
         for label, pattern in PRIVATE_PATTERNS:
             for match in pattern.finditer(text):
+                if label == "email_address" and match.group(0).lower() == "git@github.com":
+                    continue
                 line_no = text.count("\n", 0, match.start()) + 1
                 blockers.append(f"{rel}:{line_no}: possible private data ({label}).")
 
@@ -121,6 +138,18 @@ def review_skill(root: Path) -> tuple[list[str], list[str]]:
         directory = root / optional
         if directory.exists() and not any(directory.iterdir()):
             warnings.append(f"{optional}/ exists but is empty.")
+
+    install_md = root / "install.md"
+    if install_md.exists():
+        install_text = read_text(install_md)
+        missing = [heading for heading in INSTALL_MD_HEADINGS if heading not in install_text]
+        if missing:
+            blockers.append("install.md is missing heading(s): " + ", ".join(missing))
+    else:
+        warnings.append(
+            "install.md is missing; reusable skill examples should document copy, "
+            "dependencies, install, update, verification, rollback, and notes."
+        )
 
     return blockers, warnings
 

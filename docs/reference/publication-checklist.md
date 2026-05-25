@@ -12,10 +12,12 @@ Use this condensed checklist before publishing or promoting a skill.
 ## Contract
 
 - Folder name is lowercase hyphen-case.
-- `SKILL.md` frontmatter contains only `name` and `description`.
+- `SKILL.md` frontmatter follows the system `skill-creator` validator. `name` and `description` are required; `metadata`, `license`, and `allowed-tools` are optional when needed.
 - The description states concrete trigger situations.
 - The body gives operational instructions.
 - Unsupported behavior is marked as manual, optional, or out of scope.
+- Reusable skill examples include `install.md` with copy, dependency, install,
+  update, verification, rollback, and notes sections.
 
 ## Resources
 

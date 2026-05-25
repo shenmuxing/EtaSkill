@@ -1,6 +1,6 @@
 # Publication Checklist
 
-Use this checklist before committing a skill to a public repository or moving it into `muxing-skills/`.
+Use this checklist before committing a skill to a public repository or moving it into `skill-examples/`.
 
 ## Identity and Privacy
 
@@ -13,11 +13,13 @@ Use this checklist before committing a skill to a public repository or moving it
 ## Skill Contract
 
 - Folder name is lowercase hyphen-case and matches the frontmatter `name`.
-- Frontmatter contains only `name` and `description`.
+- Frontmatter uses fields accepted by the system `skill-creator` validator: `name`, `description`, `license`, `allowed-tools`, or `metadata`.
 - `description` explains what the skill does and concrete situations that should trigger it.
 - `SKILL.md` body gives operational instructions, not marketing copy.
 - Unsupported behavior is marked as omitted, manual, optional, or out of scope.
 - External integrations and local tools are named only when the skill includes enough public instructions to use them.
+- Reusable skill examples include `install.md` with copy, dependency, install,
+  update, verification, rollback, and notes sections.
 
 ## Resources
 
@@ -34,3 +36,4 @@ Use this checklist before committing a skill to a public repository or moving it
 - Search for private strings before publication.
 - Test at least one realistic prompt for complex skills.
 - Re-read generated UI metadata, if present, and ensure it matches `SKILL.md`.
+- Run the verification steps documented in `install.md` when practical.
