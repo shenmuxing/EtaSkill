@@ -1,0 +1,4 @@
+interface:
+  display_name: "Proof Finder"
+  short_description: "Mine source-indexed proof material"
+  default_prompt: "Use $proof-finder to extract source-indexed proof material from this paper and update $proof-material."

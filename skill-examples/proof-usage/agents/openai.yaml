@@ -1,0 +1,4 @@
+interface:
+  display_name: "Proof Usage"
+  short_description: "Indexed proof playbook"
+  default_prompt: "Use $proof-usage to search the indexed proof playbook for this theorem."

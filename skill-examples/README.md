@@ -9,6 +9,16 @@ Skills in this collection should be:
 - honest about what is implemented versus what remains manual;
 - small enough for another agent to understand through `SKILL.md` and optional bundled resources.
 
+## Multi-Skill Pipelines
+
+Some examples are designed to work as a pipeline rather than as isolated skills. The proof skills are the main example:
+
+```text
+source PDFs / notes -> proof-finder -> proof-material -> proof-cooker -> proof-usage
+```
+
+Keep pipeline-level routing in this README and [../docs/skills.md](../docs/skills.md). Keep detailed procedural rules inside the owning skill, especially `proof-finder` for extraction, `proof-material` for source-indexed storage, `proof-cooker` for synthesis, and `proof-usage` for final lookup.
+
 ## Layout
 
 Each skill lives in its own lowercase hyphenated directory:

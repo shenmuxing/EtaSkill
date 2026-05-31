@@ -26,6 +26,10 @@ KNOWN_SKILLS = (
     "literature-idea-planner",
     "literature-reference-builder",
     "muxing-style-review",
+    "proof-material",
+    "proof-finder",
+    "proof-cooker",
+    "proof-usage",
     "skill-creator",
     "skill-installer",
     "skill-tester",
@@ -70,6 +74,36 @@ SKILL_DEPENDENCIES = {
             "references/subagent-review-prompt.md",
             "references/revision-brief-template.md",
             "references/rule-detectors.md",
+        ),
+    },
+    "proof-material": {
+        "files": (
+            "references/index.md",
+        ),
+    },
+    "proof-finder": {
+        "skills": ("deepseek-agent", "proof-material"),
+        "commands": ("deepseek", "deepseek-tui"),
+        "files": ("references/deepseek-prompts.md",),
+    },
+    "proof-cooker": {
+        "skills": ("proof-material", "proof-usage"),
+        "files": (
+            "references/taxonomy-template.md",
+            "references/cooking-checklist.md",
+        ),
+    },
+    "proof-usage": {
+        "files": (
+            "references/index.md",
+            "references/source-map.md",
+            "references/local-moves/concentration-and-self-normalization.md",
+            "references/local-moves/convex-error-bounds.md",
+            "references/local-moves/epoch-and-restart-controls.md",
+            "references/strategies/auxiliary-models-and-contractions.md",
+            "references/strategies/dual-learning-vs-decision-making.md",
+            "references/techniques.md",
+            "references/strategies.md",
         ),
     },
     "style-review": {

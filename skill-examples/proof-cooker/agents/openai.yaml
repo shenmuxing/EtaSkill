@@ -1,0 +1,4 @@
+interface:
+  display_name: "Proof Cooker"
+  short_description: "Cook proof material into usage entries"
+  default_prompt: "Use $proof-cooker to synthesize proof-material items into proof-usage entries."

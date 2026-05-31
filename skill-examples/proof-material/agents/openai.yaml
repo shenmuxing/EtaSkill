@@ -1,0 +1,4 @@
+interface:
+  display_name: "Proof Material"
+  short_description: "Source-indexed proof material"
+  default_prompt: "Use $proof-material to find source-indexed proof material and stable material IDs."
