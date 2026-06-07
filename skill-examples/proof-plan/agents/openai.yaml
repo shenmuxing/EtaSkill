@@ -1,0 +1,4 @@
+interface:
+  display_name: "Proof Plan"
+  short_description: "Standardize a proof idea into a GPT-pro prompt bundle"
+  default_prompt: "Use $proof-plan to standardize this proof idea into prompts/<YYMMDDHH-num>/task.md and materials.md for user review before GPT-pro handoff."

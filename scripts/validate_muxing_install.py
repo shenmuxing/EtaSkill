@@ -21,6 +21,7 @@ from typing import Iterable
 
 
 KNOWN_SKILLS = (
+    "call-gpt-pro",
     "codex-deepseek-paper-protocol",
     "deepseek-agent",
     "literature-idea-planner",
@@ -30,6 +31,8 @@ KNOWN_SKILLS = (
     "proof-finder",
     "proof-cooker",
     "proof-usage",
+    "proof-orchestrator",
+    "proof-plan",
     "skill-creator",
     "skill-installer",
     "skill-tester",
@@ -50,6 +53,14 @@ INSTALL_MD_HEADINGS = (
 )
 
 SKILL_DEPENDENCIES = {
+    "call-gpt-pro": {
+        "connectors": ("chrome",),
+        "command_groups": (("pwsh", "powershell"),),
+        "files": (
+            "scripts/manage_pro_sources.ps1",
+            "scripts/invoke_openrouter_gpt_pro.ps1",
+        ),
+    },
     "codex-deepseek-paper-protocol": {
         "skills": ("deepseek-agent", "muxing-style-review"),
     },
@@ -106,6 +117,13 @@ SKILL_DEPENDENCIES = {
             "references/strategies.md",
         ),
     },
+    "proof-orchestrator": {
+        "skills": ("proof-plan", "call-gpt-pro", "deepseek-agent"),
+        "files": (
+            "references/dispatch-prompts.md",
+        ),
+    },
+    "proof-plan": {},
     "style-review": {
         "commands": ("agent-style",),
         "files": (

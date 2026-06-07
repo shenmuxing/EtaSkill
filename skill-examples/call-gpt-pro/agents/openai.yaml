@@ -1,0 +1,4 @@
+interface:
+  display_name: "Call GPT Pro"
+  short_description: "Manage GPT Pro prompts and sources through ChatGPT Projects"
+  default_prompt: "Use $call-gpt-pro to maintain .agents/pro-manage sources and prompts, sync them with a ChatGPT Project when authorized, dispatch the next prompt, and use OpenRouter only as fallback."

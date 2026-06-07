@@ -27,6 +27,7 @@ Use `proof-finder` to mine source-grounded items, `proof-material` to preserve s
 
 | Skill | Path | Use When | Notes |
 | --- | --- | --- | --- |
+| Call GPT Pro | `skill-examples/call-gpt-pro/` | Prepare citation-grounded proof prompts and route a bounded GPT Pro handoff through ChatGPT web first, with OpenRouter as fallback. | Keeps Codex in control of source gathering, route/cost gating, result review, and integration; web handoff is preferred, while OpenRouter requires `OPENROUTER_API_KEY`. |
 | Codex-DeepSeek Paper Protocol | `skill-examples/codex-deepseek-paper-protocol/` | Coordinate Codex planning and review with DeepSeek manuscript drafting or revision. | Uses the companion DeepSeek calling skill and can include explicit style review. |
 | DeepSeek Agent | `skill-examples/deepseek-agent/` | Delegate bounded writing or revision tasks to the DeepSeek CLI/TUI while Codex remains the controller. | Provides the operating contract and wrapper workflow for DeepSeek delegation. |
 | Literature Idea Planner | `skill-examples/literature-idea-planner/` | Browse academic sources through the Codex Chrome plugin and write a `planNN.md` explaining which papers to borrow from for a research idea. | Plans only; PDF fetching and BibTeX creation belong to Literature Reference Builder. |
@@ -36,6 +37,8 @@ Use `proof-finder` to mine source-grounded items, `proof-material` to preserve s
 | Proof Finder | `skill-examples/proof-finder/` | Mine proof-heavy papers or notes into Proof Material source files and backtest candidate value/self-containedness. | Uses DeepSeek for independent first-pass screening and blind backtests; does not write directly to Proof Usage. |
 | Proof Cooker | `skill-examples/proof-cooker/` | Synthesize Proof Material into the final Proof Usage taxonomy. | Clusters, de-duplicates, updates category files, and preserves material-ID links. |
 | Proof Usage | `skill-examples/proof-usage/` | Look up cooked proof moves and strategies while proving a theorem or planning a proof. | Starts from `references/index.md` and maps entries back to Proof Material through `source-map.md`; old flat files are compatibility-only. |
+| Proof Orchestrator | `skill-examples/proof-orchestrator/` | Coordinate a GPT-pro-centered proof workflow from idea standardization through reviewed handoff, GPT-pro output ingestion, Codex/DeepSeek audit, and final repair. | Uses `proof-plan`, routes approved GPT-pro calls through `call-gpt-pro`, and does not rely on legacy `proof-execution`. |
+| Proof Plan | `skill-examples/proof-plan/` | Standardize a proof idea into a reviewable `prompts/<YYMMDDHH-num>/` GPT-pro prompt bundle. | Allows simple local sanity checks while keeping central proof claims packaged for review. |
 | Skill Creator | `skill-examples/skill-creator/` | Create or update Codex skills. | Serves as a public-safe example of a fuller skill package with references, scripts, assets, and license text. |
 | Skill Installer | `skill-examples/skill-installer/` | List, install, or update Codex skills from the OpenAI skills repository or a GitHub repo path. | Bundles helper scripts and surfaces per-skill `install.md` guidance after copy/update. |
 | Skill Tester | `skill-examples/skill-tester/` | Record observable skill test runs for debugging. | Produces local, non-certifying reports of visible actions, artifacts, and blockers. |

@@ -26,11 +26,7 @@ Use `@deepseek-agent` whenever this protocol delegates to DeepSeek.  That skill 
 This protocol owns the brief, review, feedback loop, and integration judgment. Do not duplicate CLI calling details here beyond the delegation rules below.
 
 Use `muxing-style-review` as the style-control layer in two distinct modes.
-Before delegation, explicitly use the compact mode by loading
-`muxing-style-review/references/check-compact.md` and injecting only the
-relevant compact rule directives into the DeepSeek brief. After DeepSeek returns
-prose, explicitly request a complete/full `muxing-style-review` review. For
-non-trivial manuscript prose, use the skill's dedicated review-subagent option
+Before delegation, explicitly use the compact mode by loading `muxing-style-review/references/check-compact.md` and injecting only the relevant compact rule directives into the DeepSeek brief. After DeepSeek returns prose, explicitly request a complete/full `muxing-style-review` review. For non-trivial manuscript prose, use the skill's dedicated review-subagent option
 for the manual/model part of the full review when the active harness supports
 subagents. Treat the returned rule-level findings and revision brief as Codex
 review evidence; do not let the style review replace DeepSeek's authorship.
