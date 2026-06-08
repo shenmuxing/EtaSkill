@@ -67,8 +67,10 @@ Run the repository smoke checker from the repository root:
 python .\scripts\validate_muxing_install.py --installed-only --skill deepseek-agent
 ```
 
-Use `--deepseek-doctor` only when it is acceptable to run the DeepSeek account
-and network diagnostic in the active environment.
+Use `--deepseek-verify` only when it is acceptable to run the DeepSeek/OpenCode
+credential diagnostic in the active environment. Set the DeepSeek API key in
+the environment yourself before running that check; do not pass keys as command
+arguments.
 
 ## Promotion Checklist
 

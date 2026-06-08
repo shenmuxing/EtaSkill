@@ -11,10 +11,10 @@
 
 - Companion skills: `deepseek-agent` and `proof-material`.
 - Downstream skills: `proof-cooker` and `proof-usage` are used after mining, not during normal proof-finder output.
-- External CLIs: `deepseek`, `deepseek-tui`, and a shell capable of running the installed `deepseek-agent` wrapper.
+- External CLIs: `opencode`, and a shell capable of running the installed `deepseek-agent` wrapper.
 - Python packages: none.
 - Codex apps/connectors: none.
-- Credentials or accounts: DeepSeek account and network access, checked with `deepseek doctor` only when appropriate.
+- Credentials or accounts: DeepSeek API access configured for OpenCode, checked with the installed `deepseek-agent` setup helper only when appropriate.
 
 ## Install Steps
 
@@ -43,10 +43,13 @@ After installing into the active skills root, run:
 python .\scripts\validate_muxing_install.py --installed-only --skill proof-finder
 ```
 
-Run the DeepSeek account diagnostic only when appropriate:
+Run the DeepSeek/OpenCode credential check only when appropriate:
 
 ```powershell
-deepseek doctor
+$env:DEEPSEEK_API_KEY = '<set-this-yourself-in-your-shell>'
+$SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $HOME '.codex/skills' }
+& (Join-Path $SkillsRoot 'deepseek-agent\scripts\setup_opencode_deepseek.ps1') `
+  -Model 'deepseek/deepseek-chat'
 ```
 
 ## Rollback

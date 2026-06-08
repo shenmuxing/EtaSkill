@@ -33,8 +33,9 @@ python .\scripts\validate_muxing_install.py --source-only --skill deepseek-agent
 python .\scripts\validate_muxing_install.py --installed-only --skill deepseek-agent
 ```
 
-Add `--deepseek-doctor` only when the active environment may run the DeepSeek
-account and network diagnostic.
+Add `--deepseek-verify` only when the active environment may run the DeepSeek
+OpenCode credential diagnostic. Set the key in the environment yourself before
+running that check; do not pass API keys as command arguments.
 
 ## Search For Private Paths
 

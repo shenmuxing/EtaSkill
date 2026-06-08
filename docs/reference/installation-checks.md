@@ -43,9 +43,11 @@ Useful options:
 - `--skills-root <path>` checks a non-default installed skills directory.
 - `--skip-command-probes` checks whether commands exist without running
   `--version`.
-- `--deepseek-doctor` runs `deepseek doctor` for `deepseek-agent`.
+- `--deepseek-verify` runs the installed `deepseek-agent` OpenCode credential helper.
 - `--strict` treats warnings as failures.
 
-The checker is intentionally read-only. It reports missing commands such as
-`deepseek`, `deepseek-tui`, `pwsh` or `powershell`, and `agent-style`; missing
-companion skills; and manual connector checks such as Chrome availability.
+The checker is read-only unless `--deepseek-verify` is explicitly requested.
+Normal checks report missing commands such as `opencode`, `pwsh` or
+`powershell`, and `agent-style`; missing companion skills; and manual connector
+checks such as Chrome availability. The DeepSeek verification option may create
+local scratch files under `.agents/tmp/` while testing the installed wrapper.

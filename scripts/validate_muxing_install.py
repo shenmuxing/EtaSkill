@@ -3,7 +3,9 @@
 
 This is a post-install smoke checker for agents that install skills from this
 repository. It intentionally does not install external CLIs or modify user
-configuration; it reports the missing pieces the installer must resolve.
+configuration; it reports the missing pieces the installer must resolve. The
+explicit DeepSeek verification option is the exception: it calls the installed
+credential helper only when requested.
 """
 
 from __future__ import annotations
@@ -65,9 +67,13 @@ SKILL_DEPENDENCIES = {
         "skills": ("deepseek-agent", "muxing-style-review"),
     },
     "deepseek-agent": {
-        "commands": ("deepseek", "deepseek-tui"),
+        "commands": ("opencode",),
         "command_groups": (("pwsh", "powershell"),),
-        "files": ("scripts/invoke_deepseek.ps1",),
+        "files": (
+            "scripts/invoke_deepseek.ps1",
+            "scripts/setup_opencode_deepseek.ps1",
+            "scripts/set_deepseek_env.cmd",
+        ),
     },
     "literature-idea-planner": {
         "connectors": ("chrome",),
@@ -94,7 +100,7 @@ SKILL_DEPENDENCIES = {
     },
     "proof-finder": {
         "skills": ("deepseek-agent", "proof-material"),
-        "commands": ("deepseek", "deepseek-tui"),
+        "commands": ("opencode",),
         "files": ("references/deepseek-prompts.md",),
     },
     "proof-cooker": {
@@ -320,7 +326,8 @@ def check_installed_skill(
     skill: str,
     probe_commands: bool,
     probe_timeout: int,
-    deepseek_doctor: bool,
+    deepseek_verify: bool,
+    deepseek_model: str,
 ) -> list[CheckResult]:
     results: list[CheckResult] = []
     installed = skills_root / skill
@@ -376,14 +383,34 @@ def check_installed_skill(
             )
         )
 
-    if skill == "deepseek-agent" and deepseek_doctor:
-        if command_exists("deepseek"):
+    if skill == "deepseek-agent" and deepseek_verify:
+        script = installed / "scripts" / "setup_opencode_deepseek.ps1"
+        shell = shutil.which("pwsh") or shutil.which("powershell")
+        if not script.exists():
+            results.append(CheckResult("fail", "installed", skill, f"missing credential helper: {script}"))
+        elif shell is None:
+            results.append(CheckResult("fail", "installed", skill, "DeepSeek verification requires pwsh or powershell"))
+        else:
+            command = [
+                shell,
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(script),
+                "-Workspace",
+                ".",
+                "-Model",
+                deepseek_model,
+                "-TimeoutSeconds",
+                str(probe_timeout),
+            ]
             completed = subprocess.run(
-                ["deepseek", "doctor"],
+                command,
                 check=False,
                 capture_output=True,
                 text=True,
-                timeout=probe_timeout,
+                timeout=probe_timeout + 30,
             )
             summary = (completed.stdout or completed.stderr).strip().splitlines()
             message = summary[0] if summary else f"exit code {completed.returncode}"
@@ -392,11 +419,9 @@ def check_installed_skill(
                     "pass" if completed.returncode == 0 else "fail",
                     "installed",
                     skill,
-                    f"deepseek doctor: {message}",
+                    f"deepseek OpenCode verification: {message}",
                 )
             )
-        else:
-            results.append(CheckResult("fail", "installed", skill, "deepseek doctor requested but deepseek is not on PATH"))
 
     if not results:
         results.append(CheckResult("pass", "installed", skill, "installed package looks valid"))
@@ -416,7 +441,9 @@ def main() -> int:
     parser.add_argument("--source-only", action="store_true", help="validate source packages only")
     parser.add_argument("--installed-only", action="store_true", help="validate installed skills only")
     parser.add_argument("--skip-command-probes", action="store_true", help="only check command presence, not --version")
-    parser.add_argument("--deepseek-doctor", action="store_true", help="also run deepseek doctor for deepseek-agent")
+    parser.add_argument("--deepseek-verify", action="store_true", help="run the installed deepseek-agent OpenCode credential helper")
+    parser.add_argument("--deepseek-doctor", action="store_true", help="deprecated alias for --deepseek-verify")
+    parser.add_argument("--deepseek-model", default="deepseek/deepseek-chat", help="OpenCode provider/model to use for DeepSeek verification")
     parser.add_argument("--probe-timeout", type=int, default=20, help="seconds for each command probe")
     parser.add_argument("--strict", action="store_true", help="treat warnings as failures")
     parser.add_argument("--json", action="store_true", help="emit JSON")
@@ -430,6 +457,16 @@ def main() -> int:
     skills = tuple(args.skill or KNOWN_SKILLS)
 
     results: list[CheckResult] = []
+    deepseek_verify = args.deepseek_verify or args.deepseek_doctor
+    if args.deepseek_doctor:
+        results.append(
+            CheckResult(
+                "warn",
+                "environment",
+                "deepseek-agent",
+                "--deepseek-doctor is deprecated; use --deepseek-verify",
+            )
+        )
     if not args.source_only and "CODEX_HOME" not in os.environ:
         results.append(
             CheckResult(
@@ -452,7 +489,8 @@ def main() -> int:
                     skill,
                     probe_commands=not args.skip_command_probes,
                     probe_timeout=args.probe_timeout,
-                    deepseek_doctor=args.deepseek_doctor,
+                    deepseek_verify=deepseek_verify,
+                    deepseek_model=args.deepseek_model,
                 )
             )
 

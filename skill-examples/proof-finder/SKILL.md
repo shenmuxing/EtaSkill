@@ -26,7 +26,7 @@ Its normal output is a source material file plus an updated material index. Stop
 - Companion skill: `deepseek-agent` for independent screening and blind backtests.
 - Companion skill: `proof-material` for source-indexed output files and the material index.
 - Downstream companion: `proof-cooker` can later synthesize material into `proof-usage`.
-- External tools: `deepseek` and `deepseek-tui`, plus the wrapper supplied by the installed `deepseek-agent` skill.
+- External tools: `opencode`, plus the wrapper supplied by the installed `deepseek-agent` skill configured with DeepSeek provider credentials.
 
 If DeepSeek is unavailable, stop and report the blocker. Do not replace independent screening or blind backtests with Codex-only judgment unless the user explicitly accepts a degraded run.
 

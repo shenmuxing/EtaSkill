@@ -16,8 +16,8 @@ This skill is a protocol that defines how the agents cooperate.
 
 ## Required Companion Skill
 
-Use `@deepseek-agent` whenever this protocol delegates to DeepSeek.  That skill owns the installed `deepseek` / `deepseek-tui` CLI mechanics, including:
-- checking `deepseek doctor` when needed,
+Use `@deepseek-agent` whenever this protocol delegates to DeepSeek.  That skill owns the installed OpenCode execution mechanics for the DeepSeek backend, including:
+- checking OpenCode and DeepSeek provider credentials when needed,
 - calling the bundled `deepseek-agent/scripts/invoke_deepseek.ps1` wrapper,
 - choosing `direct-edit`, `unified-diff`, `replacement-block`, or `answer-only`,
 - using the standard invocation path with `-Auto`, `-UsePromptFileReference`, and `-ResultFile`,
@@ -143,7 +143,7 @@ Session policy:
 
 Each revision brief must still restate the active target files, output contract, non-negotiable constraints, and concrete issues to fix. Session reuse is an optimization, not a substitute for a complete revision brief.
 
-Use the standard wrapper path from `deepseek-agent` with `-Auto`, `-UsePromptFileReference`, `-ResultFile`, and structured output/transcript files. Add exactly one session reuse flag when needed: `-ResumeSession <id-or-prefix>`, or `-Continue` only under the safety condition above.
+Use the standard wrapper path from `deepseek-agent` with `-Auto`, `-UsePromptFileReference`, `-ResultFile`, and structured output/transcript files. Add `-Model <provider/model>` when the DeepSeek backend must be forced rather than taken from OpenCode's configured default. Add exactly one session reuse flag when needed: `-ResumeSession <id-or-prefix>`, or `-Continue` only under the safety condition above.
 
 In this protocol, `-Auto` means the DeepSeek process can read the saved brief and use workspace tools. It does not by itself grant permission to edit manuscript files. The output contract in the brief decides what DeepSeek may change.
 
