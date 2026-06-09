@@ -3,7 +3,7 @@ param(
     [string]$ApiKeyEnvVar = "DEEPSEEK_API_KEY",
 
     [Parameter(Mandatory = $false)]
-    [string]$Model = "deepseek/deepseek-chat",
+    [string]$Model = "deepseek/deepseek-v4-pro",
 
     [Parameter(Mandatory = $false)]
     [string]$Binary = "opencode",

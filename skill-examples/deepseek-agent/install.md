@@ -75,7 +75,7 @@ Open a new terminal after setting the persistent user variable, then run:
 ```powershell
 $SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $HOME '.codex/skills' }
 & (Join-Path $SkillsRoot 'deepseek-agent\scripts\setup_opencode_deepseek.ps1') `
-  -Model 'deepseek/deepseek-chat'
+  -Model 'deepseek/deepseek-v4-pro'
 ```
 
 Alternatively, set the persistent user environment variable yourself in PowerShell:
@@ -89,7 +89,7 @@ Open a new terminal after setting a persistent user variable, then run:
 ```powershell
 $SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $HOME '.codex/skills' }
 & (Join-Path $SkillsRoot 'deepseek-agent\scripts\setup_opencode_deepseek.ps1') `
-  -Model 'deepseek/deepseek-chat'
+  -Model 'deepseek/deepseek-v4-pro'
 ```
 
 ## Rollback
@@ -104,6 +104,9 @@ $SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else {
   delegation, not a reason to replace the workflow with Codex-authored prose.
 - `deepseek-agent` remains the skill name because the delegated backend is
   DeepSeek. The local execution layer is OpenCode.
+- The wrapper defaults to `deepseek/deepseek-v4-pro` when
+  `DEEPSEEK_AGENT_MODEL` is unset, so OpenCode's global default model cannot
+  silently route proof or manuscript review to a faster DeepSeek variant.
 - The bundled PowerShell wrapper is part of the installed package and should be
   resolved from the active skills root.
 - Keep verification outputs under an untracked scratch area such as

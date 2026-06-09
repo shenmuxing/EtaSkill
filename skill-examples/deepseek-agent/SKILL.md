@@ -37,7 +37,7 @@ Then open a new terminal and verify:
 $SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $HOME '.codex/skills' }
 $DeepSeekAgentSkill = Join-Path $SkillsRoot 'deepseek-agent'
 & (Join-Path $DeepSeekAgentSkill 'scripts\setup_opencode_deepseek.ps1') `
-  -Model 'deepseek/deepseek-chat'
+  -Model 'deepseek/deepseek-v4-pro'
 ```
 
 Do not commit API keys, generated `.env` files, transcripts, or verification outputs. If OpenCode reports missing credentials or provider connectivity failure, stop and report the blocker. Do not substitute Codex-authored manuscript prose for the DeepSeek delegation.
@@ -59,7 +59,7 @@ $DeepSeekAgentSkill = Join-Path $SkillsRoot 'deepseek-agent'
 & (Join-Path $DeepSeekAgentSkill 'scripts\invoke_deepseek.ps1') `
   -PromptFile .\path\to\brief.md `
   -Workspace . `
-  -Model 'deepseek/deepseek-chat' `
+  -Model 'deepseek/deepseek-v4-pro' `
   -Auto `
   -UsePromptFileReference `
   -ResultFile .\.agents\tmp\deepseek-result.md `
@@ -77,12 +77,12 @@ $DeepSeekAgentSkill = Join-Path $SkillsRoot 'deepseek-agent'
 & (Join-Path $DeepSeekAgentSkill 'scripts\invoke_deepseek.ps1') `
   -Prompt "Return OK only." `
   -Workspace . `
-  -Model 'deepseek/deepseek-chat'
+  -Model 'deepseek/deepseek-v4-pro'
 ```
 
 Do not pass the whole brief through stdout. Save the brief in the workspace, let OpenCode attach and read it, and require the artifact to be written to a file. This is the standard path for writing and revision work. It avoids two fragile channels: passing the full brief as a command-line argument, and returning the artifact through stdout/JSON. The wrapper validates that `-ResultFile` exists and is non-empty.
 
-Use `-Model <provider/model>` to force a DeepSeek backend, such as `deepseek/deepseek-chat` or the model ID configured in the local OpenCode setup. If omitted, the wrapper uses `$env:DEEPSEEK_AGENT_MODEL`; if that is also unset, OpenCode's configured default model is used.
+Use `-Model <provider/model>` to force a DeepSeek backend. The default is `deepseek/deepseek-v4-pro`: if `-Model` is omitted, the wrapper uses `$env:DEEPSEEK_AGENT_MODEL` when set and otherwise falls back to `deepseek/deepseek-v4-pro`. Do not rely on OpenCode's configured default model for proof checking or manuscript review, because it may route to a faster model such as `deepseek/deepseek-v4-flash`.
 
 Use `-Agent <name>` only when a project or user OpenCode agent has been configured for this delegation path. If omitted, OpenCode uses its default agent.
 
@@ -108,7 +108,7 @@ $DeepSeekAgentSkill = Join-Path $SkillsRoot 'deepseek-agent'
   -PromptFile .\.agents\tmp\deepseek-revision-brief.md `
   -Workspace . `
   -ResumeSession <session-id-or-prefix> `
-  -Model 'deepseek/deepseek-chat' `
+  -Model 'deepseek/deepseek-v4-pro' `
   -Auto `
   -UsePromptFileReference `
   -ResultFile .\.agents\tmp\deepseek-result-r2.md `

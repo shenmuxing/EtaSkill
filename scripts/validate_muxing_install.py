@@ -304,11 +304,12 @@ def command_exists(name: str) -> bool:
 
 
 def command_probe(name: str, timeout: int) -> tuple[bool, str]:
-    if not command_exists(name):
+    resolved = shutil.which(name)
+    if resolved is None:
         return False, "not found on PATH"
     try:
         completed = subprocess.run(
-            [name, "--version"],
+            [resolved, "--version"],
             check=False,
             capture_output=True,
             text=True,
@@ -443,7 +444,7 @@ def main() -> int:
     parser.add_argument("--skip-command-probes", action="store_true", help="only check command presence, not --version")
     parser.add_argument("--deepseek-verify", action="store_true", help="run the installed deepseek-agent OpenCode credential helper")
     parser.add_argument("--deepseek-doctor", action="store_true", help="deprecated alias for --deepseek-verify")
-    parser.add_argument("--deepseek-model", default="deepseek/deepseek-chat", help="OpenCode provider/model to use for DeepSeek verification")
+    parser.add_argument("--deepseek-model", default="deepseek/deepseek-v4-pro", help="OpenCode provider/model to use for DeepSeek verification")
     parser.add_argument("--probe-timeout", type=int, default=20, help="seconds for each command probe")
     parser.add_argument("--strict", action="store_true", help="treat warnings as failures")
     parser.add_argument("--json", action="store_true", help="emit JSON")

@@ -50,6 +50,11 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$DefaultDeepSeekAgentModel = "deepseek/deepseek-v4-pro"
+
+if ([string]::IsNullOrWhiteSpace($Model)) {
+    $Model = $DefaultDeepSeekAgentModel
+}
 
 function Fail-WithCode {
     param(
