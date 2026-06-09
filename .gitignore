@@ -217,5 +217,6 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# Local skill debugging reports
+# Local-only workspaces and debugging reports
 .skill-test-runs/
+local/
