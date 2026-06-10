@@ -9,9 +9,10 @@
 
 ## Dependencies
 
-- Companion skills: `proof-plan`, `call-gpt-pro`, and `deepseek-agent`.
-- Optional companion skills: `proof-checker-v2` if the local environment
-  already provides it.
+- Companion skills: `proof-plan`, `call-gpt-pro`, `proof-checker-v2`, and
+  `deepseek-agent`.
+- Optional runtime capability: Codex subagents for bounded local repair
+  delegation after GPT-pro output or audit findings.
 - External CLIs: inherited from companion skills.
 - Python packages: none.
 - Codex apps/connectors: none.
@@ -59,7 +60,10 @@ Do not spend GPT-pro budget; only dry-run the handoff.
 ```
 
 The run should use `proof-plan`, prepare or validate `handoff.md`, route real
-calls through `call-gpt-pro`, and avoid any `proof-execution` dependency.
+calls through `call-gpt-pro`, prefer `proof-checker-v2` for structured audits
+with direct `deepseek-agent` review as fallback, treat bounded subagent repair
+as authorized when the runtime supports subagents, and avoid any
+`proof-execution` dependency.
 
 ## Rollback
 
@@ -70,6 +74,7 @@ calls through `call-gpt-pro`, and avoid any `proof-execution` dependency.
 ## Notes
 
 - Codex may complete simple local proof patches when they are explicitly
-  labeled and directly checkable from the supplied materials.
+  labeled and directly checkable from the supplied materials, or delegate them
+  to Codex-managed subagents for parent-thread review.
 - Hard or central proof obligations should go through the reviewed GPT-pro
   handoff, then receive Codex/DeepSeek audit before being treated as usable.

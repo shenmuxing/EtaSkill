@@ -25,6 +25,11 @@ asks for API dispatch, or a project-backed source set is unavailable.
 - **ChatGPT web**: read `references/chatgpt-web.md`.
 - **Script/OpenRouter fallback**: read `references/openrouter-script.md`.
 
+The ChatGPT web route depends on the user's existing logged-in browser state.
+When this route is selected, explicitly load and use the Chrome plugin/skill
+surface. Do not substitute Playwright, the in-app browser, or another fresh
+browser context for Chrome unless the user explicitly changes the route.
+
 Do not silently switch routes after the route is selected. If the selected route
 fails, report the blocker. Use OpenRouter fallback only when the user request or
 project settings already authorize API credit spending.
@@ -48,6 +53,8 @@ prompt turn reproducible:
     this route and any API spending.
 11. `TASK`: the exact theorem, lemma, gap, or derivation target.
 12. `PROHIBITIONS`: no invented citations, hidden assumptions, or workspace edits.
+13. `MEMORY_ISOLATION`: `isolated-project`, `shared-project`, `not-applicable`,
+    or `unknown`, with a short note when the ChatGPT web route is used.
 
 Use `scripts/manage_pro_sources.ps1` to initialize the local record or generate a
 prompt skeleton when a workspace does not already have one.
@@ -55,9 +62,14 @@ prompt skeleton when a workspace does not already have one.
 ## Dispatch Rule
 
 Invoking this skill means the user has authorized GPT Pro assistance for the
-current task. Ask only when execution would require an unselected paid route, a
+current task. Ask when execution would require an unselected paid route, a
 different model family, uploading sources not covered by the current
 authorization, or a second independent web/API dispatch.
+
+For the ChatGPT web route, do not start Chrome on the user's behalf. If the
+Chrome plugin reports that Chrome is not running, send the user a short message
+asking them to start Chrome, then stop and wait. Continue with Chrome browser
+work only after the user reports that Chrome has been started.
 
 ## Output Handling
 

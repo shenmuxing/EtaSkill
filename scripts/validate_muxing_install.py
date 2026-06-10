@@ -33,6 +33,7 @@ KNOWN_SKILLS = (
     "proof-finder",
     "proof-cooker",
     "proof-usage",
+    "proof-checker-v2",
     "proof-orchestrator",
     "proof-plan",
     "skill-creator",
@@ -123,8 +124,16 @@ SKILL_DEPENDENCIES = {
             "references/strategies.md",
         ),
     },
+    "proof-checker-v2": {
+        "skills": ("deepseek-agent",),
+        "files": (
+            "references/deepseek-routing.md",
+            "references/audit-rubric.md",
+            "references/output-contract.md",
+        ),
+    },
     "proof-orchestrator": {
-        "skills": ("proof-plan", "call-gpt-pro", "deepseek-agent"),
+        "skills": ("proof-plan", "call-gpt-pro", "proof-checker-v2", "deepseek-agent"),
         "files": (
             "references/dispatch-prompts.md",
         ),

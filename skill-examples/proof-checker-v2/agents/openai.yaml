@@ -1,0 +1,4 @@
+interface:
+  display_name: "Proof Checker V2"
+  short_description: "DeepSeek-backed proof audits"
+  default_prompt: "Use $proof-checker-v2 to audit this proof with DeepSeek as the external reviewer."

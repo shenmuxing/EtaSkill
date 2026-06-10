@@ -3,6 +3,9 @@
 Use this route when the user has a logged-in ChatGPT web account with GPT
 Pro-capable model access and ChatGPT Projects are available. Treat the project
 as the remote long-lived reasoning container, not as a one-off paste target.
+Because this route relies on the user's real logged-in browser profile, use the
+Chrome plugin/skill surface for all browser work. Do not use Playwright, the
+in-app browser, or another fresh browser context as a substitute for Chrome.
 
 The local workspace remains the source of truth. Codex maintains prompts,
 source files, sync status, outputs, and safe transcript metadata under
@@ -54,9 +57,27 @@ using the shared field contract in `../SKILL.md`.
 The prompt file is the next-turn instruction, not the full source package. It
 may reference synchronized project sources by their manifest names.
 
+## Project Isolation
+
+For stress tests, evaluations, or proof-orchestrator benchmark runs, use a fresh
+ChatGPT Project for the run. Configure the Project so it does not share memory
+with the user's general ChatGPT context when the UI exposes that setting. Then
+add only the resources listed in the run manifest and ask the intended prompt.
+
+Do not mix unrelated stress tests, benchmark prompts, or proof runs in the same
+Project conversation. If a run needs a materially different source set or task,
+create a new isolated Project and record its name, memory-isolation setting, and
+source manifest in `.agents/pro-manage/project-record.md`.
+
 ## Remote Sync
 
-Use the Chrome skill/plugin for visible browser work:
+Use the Chrome skill/plugin for visible browser work. If Chrome browser control
+is not currently available, follow the Chrome skill's extension troubleshooting
+flow and record the route as blocked until Chrome is connected.
+
+If Chrome is not running, do not start it from Codex. Tell the user that Chrome
+must be started first, then stop and wait for the user to report that Chrome is
+running before continuing this route.
 
 1. Open or claim the logged-in ChatGPT Web tab.
 2. Open the target ChatGPT Project, or create it when not exist.

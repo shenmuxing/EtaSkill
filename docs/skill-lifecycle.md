@@ -25,3 +25,15 @@ Run structure and privacy checks where available. For complex skills, also test 
 ## 6. Promotion
 
 Move mature skills into `skill-examples/` only after publication review. Update the catalog and any routing documentation that depends on the skill.
+
+## Installed Skill Updates
+
+Installed skill copies are runtime deployments, not the long-term public source.
+When a reusable skill is improved in an installed skills root, port the public
+safe parts back into the matching `skill-examples/<skill-name>/` package before
+treating the update as maintained. Keep machine-specific paths, private notes,
+operational logs, and account details out of the repository copy.
+
+After porting an installed update, rerun the relevant source validation and
+publication-review workflow before publishing or recommending the updated skill
+as reusable.
