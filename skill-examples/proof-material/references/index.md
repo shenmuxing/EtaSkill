@@ -6,6 +6,7 @@ This index routes from public sources to source-indexed proof material. It is in
 | --- | --- | --- | --- | --- |
 | Cassel and Rosenberg 2024 | [cassel-rosenberg-2024-warm-up-free-policy-optimization.md](cassel-rosenberg-2024-warm-up-free-policy-optimization.md) | linear MDP, policy optimization, regret | 5 | contracted-features, sigmoid-gate, elliptical-potential, optimism, OMD |
 | Gao, Ge, Sun, Xue, and Ye 2025 | [gao-ge-sun-xue-ye-2025-online-linear-programming.md](gao-ge-sun-xue-ye-2025-online-linear-programming.md) | online linear programming, dual learning, regret | 6 | error-bound, dual-localization, restart, subgradient, exploration-exploitation |
+| Lu, Van Roy, Dwaracherla, Ibrahimi, Osband, and Wen 2023 | [lu-et-al-2023-reinforcement-learning-bit-by-bit.md](lu-et-al-2023-reinforcement-learning-bit-by-bit.md) | information ratio, Thompson sampling, IDS, regret | 9 | information-ratio, delayed-information, quantization, IDS, variance-IDS |
 
 ## ID Prefixes
 
@@ -13,6 +14,7 @@ This index routes from public sources to source-indexed proof material. It is in
 | --- | --- |
 | `CR24` | Cassel and Rosenberg, 2024 |
 | `GGSXY25` | Gao, Ge, Sun, Xue, and Ye, 2025 |
+| `RLB23` | Lu, Van Roy, Dwaracherla, Ibrahimi, Osband, and Wen, 2023 |
 
 ## Usage Notes
 

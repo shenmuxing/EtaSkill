@@ -219,3 +219,6 @@ __marimo__/
 
 # Local skill debugging reports
 .skill-test-runs/
+
+# Local proof-collection scratch and source manifests
+.proofcollect/
