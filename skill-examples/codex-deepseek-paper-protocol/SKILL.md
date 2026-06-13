@@ -25,11 +25,7 @@ Use `@deepseek-agent` whenever this protocol delegates to DeepSeek.  That skill 
 
 This protocol owns the brief, review, feedback loop, and integration judgment. Do not duplicate CLI calling details here beyond the delegation rules below.
 
-Use `muxing-style-review` as the style-control layer in two distinct modes.
-Before delegation, explicitly use the compact mode by loading `muxing-style-review/references/check-compact.md` and injecting only the relevant compact rule directives into the DeepSeek brief. After DeepSeek returns prose, explicitly request a complete/full `muxing-style-review` review. For non-trivial manuscript prose, use the skill's dedicated review-subagent option
-for the manual/model part of the full review when the active harness supports
-subagents. Treat the returned rule-level findings and revision brief as Codex
-review evidence; do not let the style review replace DeepSeek's authorship.
+Use `muxing-style-review` as the style-control layer in two distinct modes. Before delegation, explicitly use the compact mode by loading `muxing-style-review/references/check-compact.md` and injecting only the relevant compact rule directives into the DeepSeek brief. After DeepSeek returns prose, explicitly request a complete/full `muxing-style-review` review. For non-trivial manuscript prose, use the skill's dedicated review-subagent option for the manual/model part of the full review when the active harness supports subagents. Treat the returned rule-level findings and revision brief as Codex review evidence; do not let the style review replace DeepSeek's authorship.
 
 ## Core Rule
 
@@ -92,9 +88,9 @@ DeepSeek should have room to choose wording, local paragraph order, examples, an
 
 ## Workflow
 
-### Step 1: Build Task Context
+### Step 1: Build Task Context and Plan Writing
 
-Codex first combines the user's intent with enough project context to make the task actionable. Determine the target writing unit, hard constraints, source materials, and assumptions only to the level needed for delegation.
+Codex first combines the user's intent with enough project context to make the task actionable, then forms a bounded writing plan before delegation. Determine the target writing unit, hard constraints, source materials, and assumptions only to the level needed for delegation.
 
 Read relevant project context before delegating. Prefer:
 
@@ -107,7 +103,21 @@ Read relevant project context before delegating. Prefer:
 - reviewer comments or TODOs,
 - prior drafts.
 
-Codex should not dump all context into DeepSeek. Select only what is necessary for the writing unit, and ask the user only when missing information would materially change the artifact.
+Before writing the DeepSeek brief, Codex should identify the planned content components:
+
+- the target writing unit and its function in the manuscript,
+- the reader state at this point in the manuscript,
+- the concepts, definitions, claims, equations, examples, citations, or figures that the unit should cover,
+- the evidence or source map for claims that need support,
+- notation and terminology constraints from nearby manuscript context,
+- the local structure or argument flow at the level of sections, paragraphs, or proof responsibilities,
+- exclusion boundaries for material that should not be introduced,
+- acceptance checks Codex will apply after DeepSeek returns output,
+- choices left to DeepSeek, such as wording, transitions, local examples, and explanatory framing.
+
+This plan should specify content responsibilities and integration constraints, not draft manuscript prose. Avoid full paragraph drafts, sentence-level wording, or an outline so detailed that DeepSeek is reduced to filling blanks.
+
+Codex should not dump all context or the full planning notes into DeepSeek. Select only what is necessary for the writing unit, and ask the user only when missing information would materially change the artifact.
 
 If DeepSeek may edit files directly, record the target file state before delegation so later review can distinguish intended changes from unrelated user edits.
 
@@ -164,8 +174,7 @@ Codex reviews DeepSeek output against the acceptance criteria and global context
 
 If DeepSeek returns a patch, Codex may apply the patch after review, but should not rewrite the manuscript content while applying it.
 
-Run an explicit complete/full `muxing-style-review` check when DeepSeek returns
-prose in a Markdown-compatible file or extract:
+Run an explicit complete/full `muxing-style-review` check when DeepSeek returns prose in a Markdown-compatible file or extract:
 
 1. If DeepSeek edited a Markdown manuscript file, call `@muxing-style-review` or `/muxing-style-review FILE` and explicitly request a complete/full check.
 2. If DeepSeek returned a replacement block or LaTeX-only prose, save only the prose-bearing excerpt to a temporary Markdown review file, then call `@muxing-style-review` or `/muxing-style-review` on that file and explicitly request a complete/full check.
