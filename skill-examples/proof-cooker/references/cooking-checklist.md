@@ -16,12 +16,14 @@ Run this checklist before declaring cooked proof-usage entries complete.
 - The entry identifies the desired proof move.
 - The entry includes failure modes.
 - The entry says how to adapt the move to a new proof.
+- The entry includes a concrete worked mini-example with named assumptions, a
+  short derivation, source or material attribution, and technique usage.
 
 ## Public Safety
 
 - No absolute local paths.
 - No private account names.
-- No raw transcripts, OCR dumps, or run logs.
+- No raw transcripts or run logs.
 - Public attribution is short and source-level.
 
 ## Final Index

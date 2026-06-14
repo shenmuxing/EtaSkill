@@ -55,13 +55,20 @@ Each cooked entry should include:
 - `Core move`
 - `Self-contained statement or template`
 - `How to adapt`
+- `Worked mini-example`
+- `Technique usage`
 - `Failure modes`
 - `Related entries`
 - `Material sources`
 - `Public attribution`
 
+The worked mini-example should be concrete enough to imitate: state the named
+assumptions, show a short derivation, identify the source or material ID, and
+name the technique being used. Toy-sized examples are acceptable when they make
+the proof move easier to apply than a fully general statement.
+
 ## Maintenance
 
 - `proof-cooker` owns taxonomy updates, de-duplication, source-map maintenance, and migration from legacy files.
 - Cooked entries must link to one or more stable material IDs.
-- Keep raw extraction notes, DeepSeek transcripts, local OCR dumps, source-local clutter, private paths, account names, and unpublished project details out of this skill.
+- Keep raw screening notes, DeepSeek transcripts, source-local clutter, private paths, account names, and unpublished project details out of this skill.

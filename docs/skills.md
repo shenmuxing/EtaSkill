@@ -7,7 +7,7 @@ This page summarizes the reusable skills in MetaSkill and when to use them. Each
 The proof skills form a staged pipeline for turning source papers into reusable proof help:
 
 ```text
-source PDFs / notes
+source papers / notes
   -> proof-finder
   -> proof-material
   -> proof-cooker

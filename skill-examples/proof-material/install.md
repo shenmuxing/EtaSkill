@@ -51,4 +51,4 @@ python .\scripts\validate_muxing_install.py --installed-only --skill proof-mater
 ## Notes
 
 - Keep material files source-indexed and public-safe.
-- Do not store raw extraction transcripts, local OCR dumps, or private paths in this skill.
+- Do not store raw transcripts, run logs, or private paths in this skill.

@@ -51,5 +51,5 @@ python .\scripts\validate_muxing_install.py --installed-only --skill proof-cooke
 
 ## Notes
 
-- `proof-cooker` writes final reusable categories into `proof-usage`, not raw extraction notes.
+- `proof-cooker` writes final reusable categories into `proof-usage`, not raw screening notes or run artifacts.
 - Every cooked entry should preserve links back to `proof-material` IDs.

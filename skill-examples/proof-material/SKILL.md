@@ -26,7 +26,7 @@ Its job is fidelity. Keep source-local structure, stable IDs, paper locations, d
 - Keep the global source index at [references/index.md](references/index.md).
 - Create one material file per public source under `references/<source-slug>.md`.
 - Use lowercase hyphenated source slugs, usually `<authors-year-short-title>.md`.
-- Keep scratch extraction prompts, DeepSeek transcripts, local OCR output, and one-off run logs outside tracked files.
+- Keep scratch prompts, DeepSeek transcripts, and one-off run logs outside tracked files.
 
 ## Source File Contract
 

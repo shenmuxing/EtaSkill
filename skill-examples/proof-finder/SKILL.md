@@ -16,7 +16,7 @@ Use this skill to turn proof-heavy sources into source-indexed material. Codex c
 `proof-finder` is the extraction stage:
 
 ```text
-source PDFs / notes -> proof-finder -> proof-material
+source papers / notes -> proof-finder -> proof-material
 ```
 
 Its normal output is a source material file plus an updated material index. Stop before final taxonomy work; clustering, de-duplication, and category design belong to `proof-cooker`.
@@ -35,7 +35,7 @@ If DeepSeek is unavailable, stop and report the blocker. Do not replace independ
 1. Establish source boundaries.
    - Accept one or more papers, notes, Markdown files, LaTeX projects, PDFs, or excerpts.
    - Treat the source path or supplied document as the only evidence for mined entries unless the user explicitly provides additional context.
-   - Keep scratch prompts, transcripts, extracted text, and local test outputs under an untracked scratch area; do not commit them.
+   - Keep scratch prompts, transcripts, and local test outputs under an untracked scratch area; do not commit them.
 
 2. DeepSeek first-pass screening.
    - Start a fresh DeepSeek invocation for each source or logically independent batch. Do not use `--continue`.
@@ -91,4 +91,4 @@ Use [references/deepseek-prompts.md](references/deepseek-prompts.md) when drafti
 - Every kept material item must have a stable ID, source location, source attribution, tags, reusable abstraction, and proof skeleton.
 - Prefer fewer high-value items over a catalog of routine lemmas.
 - Preserve mathematical honesty: if assumptions are uncertain, mark the item for cooker verification instead of overstating it.
-- Keep private paths, account names, unpublished project details, raw transcripts, OCR dumps, and run logs out of tracked files.
+- Keep private paths, account names, unpublished project details, raw transcripts, and run logs out of tracked files.

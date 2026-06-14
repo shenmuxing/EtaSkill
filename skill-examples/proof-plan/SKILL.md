@@ -54,7 +54,12 @@ Do not force a fixed section list into `task.md` or `materials.md`. Include only
    - which assumptions are only candidate repairs;
    - which claims must not be silently assumed.
 3. Write `task.md` as the GPT-pro-facing instruction. Keep project motivation short; include only enough context for GPT-pro to understand why the task matters.
-4. Write `materials.md` as the GPT-pro-facing task materials. This may contain pasted definitions, theorem sketches, notation, source excerpts, and pointers to files in `sources/`.
+4. Write `materials.md` as the GPT-pro-facing task materials. This may contain
+   pasted definitions, theorem sketches, notation, source excerpts, and
+   pointers to files in `sources/`. If a `proof-usage` move is used, expand it
+   into a concrete proof-idea card with named assumptions, the short derivation
+   to try, source or material attribution, technique usage, and failure modes;
+   do not include only the strategy name.
 5. If needed, copy directly readable source snapshots into `sources/`. Prefer exact local material over memory.
 6. Write `review.md` when the user needs an approval checkpoint. This file should make it easy for the user to see what GPT-pro will be asked and what assumptions are being frozen.
 7. If Codex performed a simple local proof or sanity check, record it in

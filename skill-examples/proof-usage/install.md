@@ -52,4 +52,4 @@ python .\scripts\validate_muxing_install.py --installed-only --skill proof-usage
 
 - Keep entries public-safe, self-contained, and linked to material IDs.
 - Use `references/index.md` as the first lookup surface.
-- Do not store local proof-finder transcripts, raw extraction notes, OCR dumps, or paper extraction logs in this skill.
+- Do not store local proof-finder transcripts, raw screening notes, or run logs in this skill.

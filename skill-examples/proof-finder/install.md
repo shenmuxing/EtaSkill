@@ -62,4 +62,4 @@ $SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else {
 
 - Missing DeepSeek credentials or connectivity blocks full proof-finder operation.
 - Proof-finder writes source-indexed material and updates the material index; it does not write final proof-usage categories directly.
-- Scratch prompts, transcripts, extracted text, and backtest outputs are local run artifacts and should not be published with the skill.
+- Scratch prompts, transcripts, and backtest outputs are local run artifacts and should not be published with the skill.
