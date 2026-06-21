@@ -40,7 +40,7 @@ OpenRouter fallback uses the variables below.
 
 Run the PowerShell commands below in PowerShell, where the prompt usually starts
 with `PS`. They will fail in `cmd.exe`, where the prompt looks like
-`C:\Users\example>`.
+`<user-profile>`.
 
 For one temporary PowerShell session:
 

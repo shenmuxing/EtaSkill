@@ -61,6 +61,12 @@ Recommended agent flow:
 6. Report missing CLIs, unavailable app connectors, and manual credential checks
    as blockers or warnings instead of silently continuing.
 
+If an installed skill copy is edited during real use, treat the installed copy
+as a deployment. Port reusable changes back into the corresponding
+`skill-examples/<skill-name>/` source package, remove private or machine-local
+details, and validate the source package before claiming the skill has been
+updated for the repository.
+
 Run the repository smoke checker from the repository root:
 
 ```powershell

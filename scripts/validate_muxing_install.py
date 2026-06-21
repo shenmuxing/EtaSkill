@@ -23,16 +23,22 @@ from typing import Iterable
 
 
 KNOWN_SKILLS = (
+    "analysis-plan",
     "call-gpt-pro",
     "codex-deepseek-paper-protocol",
     "deepseek-agent",
+    "experiment-plan",
+    "idea-creator-analysis",
+    "idea-discovery-analysis",
     "literature-idea-planner",
     "literature-reference-builder",
     "muxing-style-review",
+    "novelty-check",
     "proof-material",
     "proof-finder",
     "proof-cooker",
     "proof-usage",
+    "proof-checker-v2",
     "proof-orchestrator",
     "proof-plan",
     "skill-creator",
@@ -55,6 +61,11 @@ INSTALL_MD_HEADINGS = (
 )
 
 SKILL_DEPENDENCIES = {
+    "analysis-plan": {
+        "files": (
+            "agents/openai.yaml",
+        ),
+    },
     "call-gpt-pro": {
         "connectors": ("chrome",),
         "command_groups": (("pwsh", "powershell"),),
@@ -75,6 +86,28 @@ SKILL_DEPENDENCIES = {
             "scripts/set_deepseek_env.cmd",
         ),
     },
+    "experiment-plan": {},
+    "idea-creator-analysis": {
+        "skills": ("deepseek-agent", "novelty-check", "analysis-plan"),
+        "files": (
+            "agents/openai.yaml",
+            "references/analysis-lenses.md",
+            "references/analysis-rubric.md",
+            "references/formal-sanity-gate.md",
+            "scripts/new_codex_idea_prompt.ps1",
+        ),
+    },
+    "idea-discovery-analysis": {
+        "skills": (
+            "idea-creator-analysis",
+            "novelty-check",
+            "deepseek-agent",
+            "analysis-plan",
+        ),
+        "files": (
+            "agents/openai.yaml",
+        ),
+    },
     "literature-idea-planner": {
         "connectors": ("chrome",),
     },
@@ -93,6 +126,7 @@ SKILL_DEPENDENCIES = {
             "references/rule-detectors.md",
         ),
     },
+    "novelty-check": {},
     "proof-material": {
         "files": (
             "references/index.md",
@@ -123,8 +157,16 @@ SKILL_DEPENDENCIES = {
             "references/strategies.md",
         ),
     },
+    "proof-checker-v2": {
+        "skills": ("deepseek-agent",),
+        "files": (
+            "references/deepseek-routing.md",
+            "references/audit-rubric.md",
+            "references/output-contract.md",
+        ),
+    },
     "proof-orchestrator": {
-        "skills": ("proof-plan", "call-gpt-pro", "deepseek-agent"),
+        "skills": ("proof-plan", "call-gpt-pro", "proof-checker-v2", "deepseek-agent"),
         "files": (
             "references/dispatch-prompts.md",
         ),

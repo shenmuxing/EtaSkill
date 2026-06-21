@@ -1,37 +1,33 @@
 ---
 name: deepseek-agent
-description: "Call a DeepSeek-backed OpenCode agent as a separate writing or revision agent from Codex. Use when Codex needs to delegate manuscript prose, LaTeX section drafting, academic text revision, or paper-writing feedback loops to DeepSeek, especially from the codex-deepseek-paper-protocol skill."
+description: "Call a DeepSeek-backed OpenCode agent as a separate critique, writing, or revision agent from Codex. Use when Codex needs to delegate adversarial research critique, novelty skepticism, method review, manuscript prose, LaTeX section drafting, academic text revision, or paper-writing feedback loops to DeepSeek."
 ---
 
 # DeepSeek Agent
 
 Use this skill to invoke a DeepSeek-backed agent through OpenCode. Codex remains the controller: it prepares the brief, chooses the output contract, calls the external agent, then reviews the result before integrating it.
 
-The skill name preserves the protocol role: `DeepSeek` means the delegated model/backend should be DeepSeek. The local execution layer is OpenCode, not `deepseek-tui`.
-
-This skill is a calling layer, not a writing protocol. For two-agent paper workflows, first follow `codex-deepseek-paper-protocol`, then use this skill at the delegation step.
-
 ## Preconditions
 
-Verify the CLI only when the current session has not already done so:
+Run these checks once per Codex session before the first DeepSeek delegation:
 
 ```powershell
 opencode --version
 opencode auth list
-# Run one of these, depending on the host:
 pwsh -NoProfile -Command '$PSVersionTable.PSVersion'
+# If pwsh is unavailable:
 powershell -NoProfile -Command '$PSVersionTable.PSVersion'
 ```
 
-`opencode` should be available on `PATH`, or the caller should pass the wrapper's `-Binary` parameter with the target executable name or path. The bundled wrapper is a PowerShell script, so either `pwsh` or Windows PowerShell must be available to run it.
+`opencode` should be available on `PATH`, or the caller should pass the wrapper's `-Binary` parameter. The bundled wrapper needs either `pwsh` or Windows PowerShell.
 
-The DeepSeek API key must be available to OpenCode through its normal provider configuration or environment loading. Set the key in your own shell or user environment before running the verification helper; do not pass API keys as command arguments. On Windows Command Prompt, use the bundled prompt-based helper:
+Credentials must come from OpenCode provider configuration or environment loading; never pass API keys as command arguments. If `DEEPSEEK_API_KEY` is missing on Windows Command Prompt, use the prompt-based helper, then open a new terminal:
 
 ```bat
 %USERPROFILE%\.codex\skills\deepseek-agent\scripts\set_deepseek_env.cmd
 ```
 
-Then open a new terminal and verify:
+To verify connectivity, resolve the installed skill path and run:
 
 ```powershell
 $SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $HOME '.codex/skills' }
@@ -41,13 +37,6 @@ $DeepSeekAgentSkill = Join-Path $SkillsRoot 'deepseek-agent'
 ```
 
 Do not commit API keys, generated `.env` files, transcripts, or verification outputs. If OpenCode reports missing credentials or provider connectivity failure, stop and report the blocker. Do not substitute Codex-authored manuscript prose for the DeepSeek delegation.
-
-When resolving this installed skill, use `$env:CODEX_HOME` when present and fall back to the default Codex skills root when it is unset:
-
-```powershell
-$SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $HOME '.codex/skills' }
-$DeepSeekAgentSkill = Join-Path $SkillsRoot 'deepseek-agent'
-```
 
 ## Invocation
 
@@ -69,71 +58,31 @@ $DeepSeekAgentSkill = Join-Path $SkillsRoot 'deepseek-agent'
   -TimeoutSeconds 1800
 ```
 
-For CLI diagnostics only, direct prompt text is acceptable:
+Keep this call shape for non-interactive writing and revision:
 
-```powershell
-$SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $HOME '.codex/skills' }
-$DeepSeekAgentSkill = Join-Path $SkillsRoot 'deepseek-agent'
-& (Join-Path $DeepSeekAgentSkill 'scripts\invoke_deepseek.ps1') `
-  -Prompt "Return OK only." `
-  -Workspace . `
-  -Model 'deepseek/deepseek-v4-pro'
-```
+- Save the brief to `-PromptFile`; use `-UsePromptFileReference -Auto` so OpenCode can read it from the workspace.
+- Require `-ResultFile` for long artifacts. Treat that file as authoritative even when `-Json` is enabled.
+- Let the brief's `OUTPUT CONTRACT` decide whether file edits are allowed: `direct-edit` may edit only listed target files; `unified-diff`, `replacement-block`, and `answer-only` must write the artifact to `-ResultFile`.
+- Set the surrounding shell/tool timeout at least 60 seconds longer than `-TimeoutSeconds`.
+- Add `-RequirePattern "<end-marker>"` when bounded text must be complete. The wrapper checks the marker in `-ResultFile` when a result file is set.
 
-Do not pass the whole brief through stdout. Save the brief in the workspace, let OpenCode attach and read it, and require the artifact to be written to a file. This is the standard path for writing and revision work. It avoids two fragile channels: passing the full brief as a command-line argument, and returning the artifact through stdout/JSON. The wrapper validates that `-ResultFile` exists and is non-empty.
+`-StreamIdleTimeoutSeconds` is accepted only for older callers; do not use it for new OpenCode runs.
 
-Use `-Model <provider/model>` to force a DeepSeek backend. The default is `deepseek/deepseek-v4-pro`: if `-Model` is omitted, the wrapper uses `$env:DEEPSEEK_AGENT_MODEL` when set and otherwise falls back to `deepseek/deepseek-v4-pro`. Do not rely on OpenCode's configured default model for proof checking or manuscript review, because it may route to a faster model such as `deepseek/deepseek-v4-flash`.
+Use `-Model <provider/model>` when a task needs a specific DeepSeek backend. If omitted, the wrapper uses `$env:DEEPSEEK_AGENT_MODEL` when set and otherwise falls back to its built-in default.
 
 Use `-Agent <name>` only when a project or user OpenCode agent has been configured for this delegation path. If omitted, OpenCode uses its default agent.
 
 ## Session Reuse
 
-Use fresh sessions by default for unrelated manuscript tasks, different target sections, or materially different source contexts. Reuse an OpenCode session only inside one bounded writing task, especially K-round review/revision loops, where preserving the same draft context and improving provider-side prefix/cache behavior is useful.
+Use a fresh OpenCode session by default. Reuse a session only for later rounds of the same bounded writing task, especially K-round review/revision loops where the target files, source context, and output contract are materially unchanged.
 
-The wrapper supports two optional OpenCode session controls:
+Session controls are mutually exclusive:
 
-- `-Continue`: pass `--continue` to continue the most recent session.
-- `-ResumeSession <id-or-prefix>`: pass `--session <id-or-prefix>` to resume a specific saved session.
+- Round 1: omit session controls and save the transcript/output.
+- Later rounds with a known session id: repeat the standard invocation and add `-ResumeSession <id-or-prefix>`.
+- Later rounds without a known id: use `-Continue` only when no other OpenCode task has run in this workspace since round 1.
 
-Do not pass both. Prefer `-ResumeSession` when the previous round's session id is known, because `-Continue` can attach to the wrong recent session if another OpenCode task ran in the same workspace.
-
-For round 1 of a task, start fresh and save the transcript/output. For later rounds of the same task, use `-ResumeSession` if the session id can be recovered from OpenCode session output or `opencode session list`; otherwise use `-Continue` only when no other OpenCode session has run in this workspace since round 1.
-
-Example revision round:
-
-```powershell
-$SkillsRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $HOME '.codex/skills' }
-$DeepSeekAgentSkill = Join-Path $SkillsRoot 'deepseek-agent'
-& (Join-Path $DeepSeekAgentSkill 'scripts\invoke_deepseek.ps1') `
-  -PromptFile .\.agents\tmp\deepseek-revision-brief.md `
-  -Workspace . `
-  -ResumeSession <session-id-or-prefix> `
-  -Model 'deepseek/deepseek-v4-pro' `
-  -Auto `
-  -UsePromptFileReference `
-  -ResultFile .\.agents\tmp\deepseek-result-r2.md `
-  -Json `
-  -OutputFile .\.agents\tmp\deepseek-output-r2.json `
-  -TranscriptFile .\.agents\tmp\deepseek-transcript-r2.json `
-  -TimeoutSeconds 1800
-```
-
-Session reuse is an optimization, not a license to rely on stale context. Each revision brief must still restate the active target files, output contract, non-negotiable constraints, and the specific issues to fix.
-
-Set the surrounding shell/tool timeout longer than `-TimeoutSeconds`; otherwise the caller can kill PowerShell before the wrapper can stop OpenCode and write diagnostics. In Codex, use a shell timeout at least 60 seconds longer than the wrapper timeout.
-
-`-StreamIdleTimeoutSeconds` remains accepted for compatibility with older callers but no longer configures `deepseek-tui`.
-
-The wrapper treats a successful process with an empty required result file as a failed delegation. If a bounded text output must be complete, put an end marker in the brief (for example `END_DEEPSEEK_OUTPUT`) and pass `-RequirePattern "END_DEEPSEEK_OUTPUT"`. When `-ResultFile` is set, the marker is checked in the result file.
-
-Use `-Auto` with `-UsePromptFileReference`; the wrapper requires it so OpenCode can attach and read the saved brief. In the OpenCode CLI this maps to automation-friendly permission skipping, so the brief must tightly constrain file access. Do not treat `-Auto` itself as permission to edit manuscript files. The brief's `OUTPUT CONTRACT` decides whether edits are allowed:
-
-- `direct-edit`: the agent may edit only the listed target files.
-- `unified-diff`, `replacement-block`, or `answer-only`: the agent must not edit manuscript files directly; write the requested artifact to `-ResultFile`.
-
-After any `-Auto` run, inspect changed files before integration. If non-`direct-edit` output touched manuscript files, treat it as an output-contract violation.
-
-Use `-Json` by default for non-interactive delegation where Codex needs structured run logs. OpenCode can emit JSON event streams rather than a single `success/output` object, so the result file remains the authoritative long artifact when `-ResultFile` is set.
+Prefer `-ResumeSession` over `-Continue`; recover ids from OpenCode output or `opencode session list` when needed. Session reuse is only an optimization: every revision brief must still restate the active target files, output contract, non-negotiable constraints, and specific issues to fix.
 
 ## Brief Contract
 
@@ -151,8 +100,6 @@ Every prompt sent through this skill must include:
    - `answer-only`: write analysis or draft text to the agreed `-ResultFile`; stdout should contain only summary.
 7. `PROHIBITIONS`: no invented citations, unsupported results, author metadata, unrelated file edits, or secret exposure.
 8. `ACCEPTANCE CRITERIA`: concrete checks Codex will apply.
-
-For paper writing, constrain substance and facts, not exact wording. Let the DeepSeek-backed agent choose prose, local paragraph order, transitions, and explanatory framing.
 
 ## Output Handling
 

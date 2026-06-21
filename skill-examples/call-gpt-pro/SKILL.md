@@ -25,6 +25,11 @@ asks for API dispatch, or a project-backed source set is unavailable.
 - **ChatGPT web**: read `references/chatgpt-web.md`.
 - **Script/OpenRouter fallback**: read `references/openrouter-script.md`.
 
+The ChatGPT web route depends on the user's existing logged-in browser state.
+When this route is selected, explicitly load and use the Chrome plugin/skill
+surface. Do not substitute Playwright, the in-app browser, or another fresh
+browser context for Chrome unless the user explicitly changes the route.
+
 Do not silently switch routes after the route is selected. If the selected route
 fails, report the blocker. Use OpenRouter fallback only when the user request or
 project settings already authorize API credit spending.
@@ -38,9 +43,10 @@ prompt turn reproducible:
 1. `DEFAULT_ROUTE`: `chatgpt-web` unless the user or project overrides it.
 2. `SELECTED_ROUTE`: `chatgpt-web` or `openrouter-script` for this handoff.
 3. `PROJECT_NAME`: visible ChatGPT Project name when the web route is used.
-4. `REMOTE_PROJECT_STATE`: `synced`, `needs-sync`, `blocked`, or `unknown`.
+4. `REMOTE_PROJECT_STATE`: `synced`, `synced-via-bundle`, `needs-sync`,
+   `blocked`, or `unknown`.
 5. `MODEL`: web model label or OpenRouter model slug.
-6. `PROMPT_FILE`: path to the exact prompt for the next turn.
+6. `PROMPT_FILE`: path to the exact model-facing prompt for the next turn.
 7. `SOURCE_MANIFEST`: local source inventory and sync status.
 8. `OUTPUT_FILE`: path where the answer should be saved.
 9. `TRANSCRIPT_FILE`: path for web/API metadata.
@@ -48,16 +54,31 @@ prompt turn reproducible:
     this route and any API spending.
 11. `TASK`: the exact theorem, lemma, gap, or derivation target.
 12. `PROHIBITIONS`: no invented citations, hidden assumptions, or workspace edits.
+13. `MEMORY_ISOLATION`: `isolated-project`, `shared-project`, `not-applicable`,
+    or `unknown`, with a short note when the ChatGPT web route is used.
 
-Use `scripts/manage_pro_sources.ps1` to initialize the local record or generate a
-prompt skeleton when a workspace does not already have one.
+Use `scripts/manage_pro_sources.ps1` to initialize the local record, generate a
+text source bundle, or generate a prompt skeleton when a workspace does not
+already have one.
+
+Keep route metadata in `project-record.md`, source manifests, and transcript
+files, not in `PROMPT_FILE`. The prompt pasted into ChatGPT should contain only
+the model-facing instruction: task, constraints, expected output, and references
+to visible synchronized project sources when needed. Do not paste local paths,
+output paths, transcript paths, model labels, or project bookkeeping as prompt
+content.
 
 ## Dispatch Rule
 
 Invoking this skill means the user has authorized GPT Pro assistance for the
-current task. Ask only when execution would require an unselected paid route, a
+current task. Ask when execution would require an unselected paid route, a
 different model family, uploading sources not covered by the current
 authorization, or a second independent web/API dispatch.
+
+For the ChatGPT web route, do not start Chrome on the user's behalf. If the
+Chrome plugin reports that Chrome is not running, send the user a short message
+asking them to start Chrome, then stop and wait. Continue with Chrome browser
+work only after the user reports that Chrome has been started.
 
 ## Output Handling
 

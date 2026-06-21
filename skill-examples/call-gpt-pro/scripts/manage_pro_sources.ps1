@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $false)]
-    [ValidateSet("Init", "AddSource", "NewPrompt")]
+    [ValidateSet("Init", "AddSource", "NewBundle", "NewPrompt")]
     [string]$Action = "Init",
 
     [Parameter(Mandatory = $false)]
@@ -31,6 +31,28 @@ $ErrorActionPreference = "Stop"
 function Resolve-WorkspacePath {
     param([Parameter(Mandatory = $true)][string]$Path)
     return $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+}
+
+function Resolve-SourceReference {
+    param(
+        [Parameter(Mandatory = $true)][string]$ResolvedRoot,
+        [Parameter(Mandatory = $true)][string]$Path
+    )
+
+    if ([IO.Path]::IsPathRooted($Path)) {
+        return $Path
+    }
+
+    $rootRelative = Join-Path $ResolvedRoot $Path
+    if (Test-Path -LiteralPath $rootRelative) {
+        return $rootRelative
+    }
+
+    try {
+        return Resolve-WorkspacePath $Path
+    } catch {
+        return $rootRelative
+    }
 }
 
 function Ensure-ProManageRoot {
@@ -115,6 +137,75 @@ if ($Action -eq "AddSource") {
     exit 0
 }
 
+if ($Action -eq "NewBundle") {
+    $stamp = Get-Date -Format "yyMMddHH"
+    $bundleBase = if (-not [string]::IsNullOrWhiteSpace($Name)) {
+        $Name
+    } elseif (-not [string]::IsNullOrWhiteSpace($ProjectName)) {
+        "$ProjectName-source-bundle"
+    } else {
+        "source-bundle-$stamp"
+    }
+
+    $bundleName = if ([IO.Path]::GetExtension($bundleBase)) { $bundleBase } else { "$bundleBase.txt" }
+    $bundlePath = Join-Path (Join-Path $resolvedRoot "sources") $bundleName
+
+    $bundle = [System.Collections.Generic.List[string]]::new()
+    $bundle.Add("# ChatGPT Project Source Bundle")
+    $bundle.Add("")
+    $bundle.Add("- Bundle: $bundleName")
+    $bundle.Add("- Source manifest: sources/manifest.md")
+    $bundle.Add("")
+
+    $allTableLines = Get-Content -LiteralPath $manifestPath | Where-Object {
+        $_ -match '^\|' -and $_ -notmatch '^\|\s*-+'
+    }
+    $headerLine = $allTableLines | Select-Object -First 1
+    $tableLines = $allTableLines | Select-Object -Skip 1
+    $headers = @()
+    if ($headerLine) {
+        $headers = $headerLine.Trim().Trim('|').Split('|') | ForEach-Object { $_.Trim().Trim([char]0x60) }
+    }
+    $nameIndex = [Array]::IndexOf($headers, "Name")
+    if ($nameIndex -lt 0) { $nameIndex = [Array]::IndexOf($headers, "File") }
+    if ($nameIndex -lt 0) { $nameIndex = 0 }
+    $kindIndex = [Array]::IndexOf($headers, "Kind")
+    $localIndex = [Array]::IndexOf($headers, "Local path")
+    if ($localIndex -lt 0) { $localIndex = [Array]::IndexOf($headers, "Local source") }
+    if ($localIndex -lt 0) { $localIndex = 2 }
+
+    foreach ($row in $tableLines) {
+        $cols = $row.Trim().Trim('|').Split('|') | ForEach-Object { $_.Trim().Trim([char]0x60) }
+        if ($cols.Count -le $localIndex -or $cols.Count -le $nameIndex) {
+            continue
+        }
+
+        $sourceName = $cols[$nameIndex]
+        $entryKind = if ($kindIndex -ge 0 -and $cols.Count -gt $kindIndex) { $cols[$kindIndex] } else { "Source" }
+        $localPath = $cols[$localIndex]
+        $resolvedLocal = Resolve-SourceReference -ResolvedRoot $resolvedRoot -Path $localPath
+
+        $bundle.Add("## Source: $sourceName")
+        $bundle.Add("")
+        $bundle.Add("- Kind: $entryKind")
+        $bundle.Add("- Local path: $localPath")
+        $bundle.Add("")
+
+        if (Test-Path -LiteralPath $resolvedLocal) {
+            $bundle.Add('```markdown')
+            $bundle.Add((Get-Content -LiteralPath $resolvedLocal -Raw))
+            $bundle.Add('```')
+        } else {
+            $bundle.Add("MISSING SOURCE: $localPath")
+        }
+        $bundle.Add("")
+    }
+
+    $bundle | Set-Content -LiteralPath $bundlePath -Encoding UTF8
+    Write-Output "Created source bundle $bundlePath"
+    exit 0
+}
+
 if ($Action -eq "NewPrompt") {
     if ([string]::IsNullOrWhiteSpace($Task)) {
         throw "Provide -Task for NewPrompt."
@@ -129,23 +220,32 @@ if ($Action -eq "NewPrompt") {
     @(
         "# GPT Pro Prompt",
         "",
-        "- PROJECT_NAME: $ProjectName",
-        "- MODEL: $Model",
-        "- SOURCE_MANIFEST: ../sources/manifest.md",
-        "- OUTPUT_FILE: ../$outputPath",
-        "- TRANSCRIPT_FILE: ../$transcriptPath",
-        "- TASK: $Task",
-        "",
-        "## Instructions",
-        "",
         "Use only the synchronized project sources and the prompt below. If a needed source is missing or stale, say so explicitly.",
         "",
-        "## Prompt",
+        "Do not use external citations, theorem numbers, or source facts unless they are already in the synchronized project sources.",
+        "",
+        "## Task",
         "",
         $Task,
         "",
         "END_GPT_PRO_PROMPT"
     ) | Set-Content -LiteralPath $promptPath -Encoding UTF8
+
+    $recordPath = Join-Path $resolvedRoot "project-record.md"
+    if (Test-Path -LiteralPath $recordPath) {
+        $promptRel = "prompts/$promptName"
+        $record = Get-Content -LiteralPath $recordPath
+        $record = $record | ForEach-Object {
+            if ($_ -like "- PROJECT_NAME:*") { "- PROJECT_NAME: $ProjectName" }
+            elseif ($_ -like "- MODEL:*") { "- MODEL: $Model" }
+            elseif ($_ -like "- PROMPT_FILE:*") { "- PROMPT_FILE: $promptRel" }
+            elseif ($_ -like "- OUTPUT_FILE:*") { "- OUTPUT_FILE: $outputPath" }
+            elseif ($_ -like "- TRANSCRIPT_FILE:*") { "- TRANSCRIPT_FILE: $transcriptPath" }
+            elseif ($_ -like "- TASK:*") { "- TASK: $Task" }
+            else { $_ }
+        }
+        $record | Set-Content -LiteralPath $recordPath -Encoding UTF8
+    }
 
     Write-Output "Created prompt $promptPath"
     exit 0
