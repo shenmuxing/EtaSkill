@@ -1,0 +1,4 @@
+interface:
+  display_name: "Analysis Plan"
+  short_description: "Proof-oriented research plan builder"
+  default_prompt: "Use $analysis-plan to turn this theory idea into theorem targets and proof obligations."

@@ -26,6 +26,31 @@ Requirements:
 - Stop for user review unless approval is already explicit.
 ```
 
+## Preflight Difficulty Probe Prompt
+
+```text
+Use $proof-orchestrator to run a preflight difficulty probe before any GPT-pro
+handoff or budget request.
+
+Run directory:
+prompts/<YYMMDDHH-num>/
+
+Inputs:
+- prompts/<YYMMDDHH-num>/task.md
+- prompts/<YYMMDDHH-num>/materials.md
+- optional source snapshots under prompts/<YYMMDDHH-num>/sources/
+
+Output:
+prompts/<YYMMDDHH-num>/preflight.md
+
+Requirements:
+- Attempt the shortest honest local answer from the supplied materials.
+- Decide whether the task is immediate from definitions, only a domain/support/topology mismatch, already implied by prompt wording, or genuinely hard enough for GPT-pro.
+- Classify the run as one of SEND_TO_GPT_PRO, LOCAL_ONLY, REWRITE_PROMPT, SPLIT_CASE, or ASK_USER.
+- If the status is not SEND_TO_GPT_PRO, recommend the smallest next action before any GPT-pro spend.
+- Do not broaden the theorem, invent citations, call GPT-pro, upload sources, or edit unrelated files.
+```
+
 ## Handoff Prompt
 
 ```text
@@ -102,3 +127,20 @@ Requirements:
 - Apply local mechanical edits, wording repairs, and simple proof patches that are explicitly supported by the audit.
 - If a substantive gap remains, mark the artifact as not ready instead of polishing it into a false proof.
 ```
+
+## Subagent Repair Prompt
+
+For bounded local repairs, generate the subagent brief from the fixed template
+instead of rewriting role and guardrails by hand:
+
+```powershell
+.\.codex\skills\proof-orchestrator\scripts\new_subagent_repair_prompt.ps1 `
+  -RunDirectory prompts\<YYMMDDHH-num> `
+  -TargetPath prompts\<YYMMDDHH-num>\final.md `
+  -Request "[concrete local repair request]" `
+  -SourcePath prompts\<YYMMDDHH-num>\gpt-pro-output.md,prompts\<YYMMDDHH-num>\audit.md `
+  -AllowMissingTarget
+```
+
+Then pass the generated `subagent-repair-prompt.md` to the Codex-capability
+subagent. Parent Codex must review the result before integration.

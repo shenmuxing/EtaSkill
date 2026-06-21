@@ -43,9 +43,10 @@ prompt turn reproducible:
 1. `DEFAULT_ROUTE`: `chatgpt-web` unless the user or project overrides it.
 2. `SELECTED_ROUTE`: `chatgpt-web` or `openrouter-script` for this handoff.
 3. `PROJECT_NAME`: visible ChatGPT Project name when the web route is used.
-4. `REMOTE_PROJECT_STATE`: `synced`, `needs-sync`, `blocked`, or `unknown`.
+4. `REMOTE_PROJECT_STATE`: `synced`, `synced-via-bundle`, `needs-sync`,
+   `blocked`, or `unknown`.
 5. `MODEL`: web model label or OpenRouter model slug.
-6. `PROMPT_FILE`: path to the exact prompt for the next turn.
+6. `PROMPT_FILE`: path to the exact model-facing prompt for the next turn.
 7. `SOURCE_MANIFEST`: local source inventory and sync status.
 8. `OUTPUT_FILE`: path where the answer should be saved.
 9. `TRANSCRIPT_FILE`: path for web/API metadata.
@@ -56,8 +57,16 @@ prompt turn reproducible:
 13. `MEMORY_ISOLATION`: `isolated-project`, `shared-project`, `not-applicable`,
     or `unknown`, with a short note when the ChatGPT web route is used.
 
-Use `scripts/manage_pro_sources.ps1` to initialize the local record or generate a
-prompt skeleton when a workspace does not already have one.
+Use `scripts/manage_pro_sources.ps1` to initialize the local record, generate a
+text source bundle, or generate a prompt skeleton when a workspace does not
+already have one.
+
+Keep route metadata in `project-record.md`, source manifests, and transcript
+files, not in `PROMPT_FILE`. The prompt pasted into ChatGPT should contain only
+the model-facing instruction: task, constraints, expected output, and references
+to visible synchronized project sources when needed. Do not paste local paths,
+output paths, transcript paths, model labels, or project bookkeeping as prompt
+content.
 
 ## Dispatch Rule
 

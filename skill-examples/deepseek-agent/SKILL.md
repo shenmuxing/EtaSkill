@@ -1,15 +1,11 @@
 ---
 name: deepseek-agent
-description: "Call a DeepSeek-backed OpenCode agent as a separate writing or revision agent from Codex. Use when Codex needs to delegate manuscript prose, LaTeX section drafting, academic text revision, or paper-writing feedback loops to DeepSeek, especially from the codex-deepseek-paper-protocol skill."
+description: "Call a DeepSeek-backed OpenCode agent as a separate critique, writing, or revision agent from Codex. Use when Codex needs to delegate adversarial research critique, novelty skepticism, method review, manuscript prose, LaTeX section drafting, academic text revision, or paper-writing feedback loops to DeepSeek."
 ---
 
 # DeepSeek Agent
 
 Use this skill to invoke a DeepSeek-backed agent through OpenCode. Codex remains the controller: it prepares the brief, chooses the output contract, calls the external agent, then reviews the result before integrating it.
-
-The skill name preserves the protocol role: `DeepSeek` means the delegated model/backend should be DeepSeek. The local execution layer is OpenCode, not `deepseek-tui`.
-
-This skill is a calling layer, not a writing protocol. For two-agent paper workflows, first follow `codex-deepseek-paper-protocol`, then use this skill at the delegation step.
 
 ## Preconditions
 
@@ -104,8 +100,6 @@ Every prompt sent through this skill must include:
    - `answer-only`: write analysis or draft text to the agreed `-ResultFile`; stdout should contain only summary.
 7. `PROHIBITIONS`: no invented citations, unsupported results, author metadata, unrelated file edits, or secret exposure.
 8. `ACCEPTANCE CRITERIA`: concrete checks Codex will apply.
-
-For paper writing, constrain substance and facts, not exact wording. Let the DeepSeek-backed agent choose prose, local paragraph order, transitions, and explanatory framing.
 
 ## Output Handling
 

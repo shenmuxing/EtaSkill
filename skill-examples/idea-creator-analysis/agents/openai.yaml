@@ -1,0 +1,4 @@
+interface:
+  display_name: "Idea Creator Analysis"
+  short_description: "Codex subagent theory idea generation"
+  default_prompt: "Use $idea-creator-analysis to generate proof-oriented research ideas with a latest-GPT Codex subagent and reserve DeepSeek for critique."

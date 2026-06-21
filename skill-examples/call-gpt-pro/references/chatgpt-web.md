@@ -30,7 +30,10 @@ Create or reuse this workspace-local layout:
 ```
 
 Use `scripts/manage_pro_sources.ps1` to initialize the layout or create a prompt
-skeleton when the workspace has no existing convention.
+skeleton when the workspace has no existing convention. If Chrome-side direct
+file upload is unavailable or the Project is intentionally using one text
+source, run the script with `-Action NewBundle` to create a local
+`sources/*-source-bundle.txt` file before adding that text source to ChatGPT.
 
 ## Source Classes
 
@@ -56,6 +59,21 @@ using the shared field contract in `../SKILL.md`.
 
 The prompt file is the next-turn instruction, not the full source package. It
 may reference synchronized project sources by their manifest names.
+
+Prompt hygiene rules:
+
+- Keep route metadata out of the prompt. `PROJECT_NAME`, `MODEL`,
+  `SOURCE_MANIFEST`, `OUTPUT_FILE`, `TRANSCRIPT_FILE`, and local filesystem
+  paths belong in `project-record.md` or `TRANSCRIPT_FILE`, not in the pasted
+  ChatGPT message.
+- Do not describe local manifest entries as "attached files" unless those exact
+  files are visibly attached as separate Project sources in ChatGPT.
+- If several local sources are synchronized through one combined Project text
+  source, name that visible bundle source and explain that it contains the
+  listed local source snapshots; do not claim the snapshots are separate remote
+  attachments.
+- Before sending, inspect `PROMPT_FILE` for false attachment claims or local
+  bookkeeping. Rewrite and save the prompt if any are present.
 
 ## Project Isolation
 
@@ -86,7 +104,11 @@ running before continuing this route.
 4. Compare the visible Project source list with `sources/manifest.md`.
 5. Upload or replace only sources marked `needs-sync` and covered by the current
    authorization.
-6. Update `sources/manifest.md` and `project-record.md` after visible sync is
+6. If the remote source is a combined text bundle, confirm the visible Project
+   source name exactly matches the local `sources/*-source-bundle.txt` file,
+   record `REMOTE_PROJECT_STATE: synced-via-bundle`, and record in the manifest
+   notes that each included source was synced through that bundle.
+7. Update `sources/manifest.md` and `project-record.md` after visible sync is
    confirmed.
 
 If the web UI does not expose enough source metadata to prove exact equality,
@@ -96,14 +118,26 @@ record the remote state as `unknown` or `blocked` rather than claiming `synced`.
 
 After sources are synchronized:
 
-1. Select the intended Pro-capable model. If unavailable, stop and report the
-   blocker instead of switching silently.
+1. Before opening or continuing the conversation, confirm the visible model
+   picker is set to the strongest available GPT Pro reasoning tier covered by
+   the current authorization, such as GPT Pro with advanced thinking when the
+   UI exposes that option. If the tier is unavailable or cannot be confirmed,
+   stop and report the blocker instead of sending under a weaker or default
+   model silently.
 2. Open a new or appropriate existing conversation inside the ChatGPT Project.
-3. Paste the exact contents of `PROMPT_FILE` into the composer.
-4. Send the prompt under the current `call-gpt-pro` authorization.
-5. Wait until the response is complete or visibly failed.
-6. Save the full returned answer to `OUTPUT_FILE`.
-7. Write `TRANSCRIPT_FILE` with safe metadata: timestamp, route
+3. Re-check `PROMPT_FILE` against the prompt hygiene rules above.
+4. Paste the exact contents of the checked `PROMPT_FILE` into the composer.
+5. Send the prompt under the current `call-gpt-pro` authorization.
+6. Wait until the response is complete or visibly failed.
+7. Save the full returned answer to `OUTPUT_FILE`.
+8. Do a formatting-only cleanup pass on `OUTPUT_FILE`: repair obvious web-copy
+   artifacts such as broken inline/display math, split subscripts and
+   superscripts, `argmax`/`argmin` layouts, Greek-symbol formulas, stray tabs,
+   and zero-width characters into Obsidian-compatible Markdown math (`$...$` or
+   `$$...$$`). Preserve the proof order, claims, constants, assumptions, and
+   wording except for unmistakable typos; if a formula is ambiguous, flag it
+   locally instead of guessing.
+9. Write `TRANSCRIPT_FILE` with safe metadata: timestamp, route
    `chatgpt-web`, Project name, visible model label when available, prompt file,
    output file, source manifest, completion status, and any non-sensitive
    failure details.

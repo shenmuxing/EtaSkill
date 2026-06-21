@@ -1,4 +1,4 @@
 interface:
   display_name: "Proof Orchestrator"
   short_description: "Coordinate the GPT-pro-centered proof pipeline"
-  default_prompt: "Use $proof-orchestrator to standardize the idea, require user review, package the GPT-pro handoff with $call-gpt-pro, ingest GPT-pro output, audit it with Codex/DeepSeek checks, delegate bounded local repairs to Codex-managed subagents when useful, and prepare the final usable proof artifact."
+  default_prompt: "Use $proof-orchestrator to standardize the idea, run a preflight difficulty probe, require user review, package the GPT-pro handoff with $call-gpt-pro, ingest GPT-pro output, audit it with Codex/DeepSeek checks, delegate bounded local repairs to Codex-managed subagents when useful, and prepare the final usable proof artifact."

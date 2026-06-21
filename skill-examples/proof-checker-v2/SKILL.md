@@ -14,7 +14,6 @@ Treat this skill as one reviewer step in a larger proof workflow.
 
 - Do not spawn additional agents from inside this skill unless the user explicitly requests nested review.
 - Use DeepSeek as the external reviewer when a DeepSeek route is available. Prefer an MCP bridge such as `llm-chat`; use `deepseek-agent` only as fallback.
-- Do not use GPT/Codex reviewer agents as the default proof reviewer. Codex may prepare context, verify output shape, and integrate the audit.
 - Do not edit source proofs unless the user explicitly asks for a patch. Produce an audit, suggested fixes, and optional replacement statements.
 - Do not silently strengthen assumptions or weaken conclusions. Label every such move as a proposed repair.
 - Do not accept "clearly", "standard", "by symmetry", or "it follows" unless the missing obligation is genuinely trivial under stated assumptions.
