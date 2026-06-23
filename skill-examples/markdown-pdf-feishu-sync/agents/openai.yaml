@@ -1,0 +1,4 @@
+interface:
+  display_name: "Markdown PDF Feishu Sync"
+  short_description: "Convert Markdown batches to PDFs and sync them"
+  default_prompt: "Use $markdown-pdf-feishu-sync to convert configured Markdown files to PDFs and upload them to Feishu Drive."
