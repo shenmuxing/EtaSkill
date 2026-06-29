@@ -11,6 +11,10 @@ local/markdown-pdf-feishu-sync/rules.json
 ```json
 {
   "version": 1,
+  "delivery": {
+    "mode": "feishu",
+    "manual_upload": false
+  },
   "feishu": {
     "folder_url": "https://example.feishu.cn/drive/folder/folder_token_here",
     "folder_token": "folder_token_here",
@@ -45,6 +49,8 @@ local/markdown-pdf-feishu-sync/rules.json
 ## Fields
 
 - `version`: Use `1`.
+- `delivery.mode`: Use `feishu` for upload-capable runs or `local` for PDF-only runs where the user manually uploads files.
+- `delivery.manual_upload`: Set `true` when generated PDFs are intentionally left for manual categorization/upload.
 - `feishu.folder_url`: Human-facing target folder URL.
 - `feishu.folder_token`: Drive folder token parsed from the URL.
 - `feishu.identity`: `bot` or `user`; passed to `lark-cli --as`.

@@ -23,7 +23,7 @@ class PlanItem:
     markdown_path: Path
     relative_path: Path
     pdf_path: Path
-    folder_token: str
+    folder_token: str = ""
 
 
 def load_rules(path: Path) -> dict[str, Any]:
@@ -45,6 +45,11 @@ def resolve_repo_path(repo_root: Path, value: str | None, default: str) -> Path:
 def extract_folder_token(folder_url: str) -> str:
     match = re.search(r"/drive/folder/([^/?#]+)", folder_url or "")
     return match.group(1) if match else ""
+
+
+def delivery_mode(rules: dict[str, Any]) -> str:
+    delivery = rules.get("delivery", {})
+    return str(delivery.get("mode") or "feishu").lower()
 
 
 def merged_list(source: dict[str, Any], defaults: dict[str, Any], key: str) -> list[str]:
@@ -86,7 +91,8 @@ def build_plan(rules: dict[str, Any], repo_root: Path) -> list[PlanItem]:
     categories = rules.get("categories", {})
     feishu = rules.get("feishu", {})
     root_folder_token = feishu.get("folder_token") or extract_folder_token(feishu.get("folder_url", ""))
-    if not root_folder_token:
+    local_only = delivery_mode(rules) == "local"
+    if not local_only and not root_folder_token:
         raise SystemExit("Missing feishu.folder_token or parseable feishu.folder_url")
 
     output_cfg = rules.get("output", {})
@@ -101,7 +107,7 @@ def build_plan(rules: dict[str, Any], repo_root: Path) -> list[PlanItem]:
         source_root = Path(str(source["path"])).expanduser().resolve()
         category = str(source.get("category") or defaults.get("category") or "uncategorized")
         category_cfg = categories.get(category, {})
-        folder_token = category_cfg.get("folder_token") or root_folder_token
+        folder_token = "" if local_only else category_cfg.get("folder_token") or root_folder_token
         for md_path in discover_markdown(source, defaults):
             rel = md_path.relative_to(source_root)
             pdf_path = pdf_root / category / str(source["name"]) / rel.with_suffix(".pdf")
@@ -157,6 +163,10 @@ def run_conversion(rules: dict[str, Any], item: PlanItem) -> dict[str, Any]:
 def run_upload(rules: dict[str, Any], pdf_root: Path, item: PlanItem) -> dict[str, Any]:
     if not item.pdf_path.exists():
         return {"returncode": 1, "stderr": "PDF does not exist; upload skipped"}
+    if delivery_mode(rules) == "local":
+        return {"returncode": 1, "stderr": "Upload disabled because delivery.mode is local"}
+    if not item.folder_token:
+        return {"returncode": 1, "stderr": "Missing folder token; upload skipped"}
     feishu = rules.get("feishu", {})
     identity = str(feishu.get("identity") or "bot")
     rel_pdf = item.pdf_path.relative_to(pdf_root)
@@ -199,6 +209,8 @@ def main() -> int:
     if not rules_path.is_absolute():
         rules_path = (repo_root / rules_path).resolve()
     rules = load_rules(rules_path)
+    if args.upload and delivery_mode(rules) == "local":
+        raise SystemExit("Upload disabled because delivery.mode is local")
     plan = build_plan(rules, repo_root)
 
     output_cfg = rules.get("output", {})
@@ -211,6 +223,7 @@ def main() -> int:
         "pdf_root": str(pdf_root),
         "manifest": str(manifest_path),
         "items": len(plan),
+        "delivery_mode": delivery_mode(rules),
         "pending_decisions": rules.get("pending_decisions", []),
     }
     print(json.dumps(summary, ensure_ascii=False, indent=2))
@@ -224,9 +237,10 @@ def main() -> int:
             "markdown": str(item.markdown_path),
             "relative": item.relative_path.as_posix(),
             "pdf": str(item.pdf_path),
-            "folder_token": item.folder_token,
             "dry_run": bool(args.dry_run or not (args.convert or args.upload)),
         }
+        if item.folder_token:
+            record["folder_token"] = item.folder_token
         if args.dry_run or not (args.convert or args.upload):
             print(json.dumps(record, ensure_ascii=False))
             continue
