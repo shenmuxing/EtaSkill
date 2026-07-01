@@ -56,6 +56,10 @@ prompt turn reproducible:
 12. `PROHIBITIONS`: no invented citations, hidden assumptions, or workspace edits.
 13. `MEMORY_ISOLATION`: `isolated-project`, `shared-project`, `not-applicable`,
     or `unknown`, with a short note when the ChatGPT web route is used.
+14. `REQUIRED_DIRECT_SOURCES`: files the user or run manifest requires as
+    separate visible Project sources, especially named PDFs.
+15. `CONVERSATION_MODE`: `new-project-chat`, `same-project-followup`,
+    `new-project`, or `unknown`.
 
 Use `scripts/manage_pro_sources.ps1` to initialize the local record, generate a
 text source bundle, or generate a prompt skeleton when a workspace does not
@@ -79,6 +83,12 @@ For the ChatGPT web route, do not start Chrome on the user's behalf. If the
 Chrome plugin reports that Chrome is not running, send the user a short message
 asking them to start Chrome, then stop and wait. Continue with Chrome browser
 work only after the user reports that Chrome has been started.
+
+For every ChatGPT web GPT Pro dispatch, follow the response waiting protocol in
+`references/chatgpt-web.md`: poll at 15-minute intervals, keep the run in
+progress while the page still shows active Pro thinking or generation controls,
+and only classify output quality after the final assistant message is visibly
+complete.
 
 ## Output Handling
 

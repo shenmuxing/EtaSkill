@@ -26,6 +26,50 @@ Requirements:
 - Stop for user review unless approval is already explicit.
 ```
 
+## Continuation Prompt
+
+```text
+Use $proof-orchestrator to continue this proof project from the existing run.
+
+Prior run directory:
+prompts/<YYMMDDHH-num>/
+
+Continuation request:
+[one sentence from the user or the prior next.md]
+
+Required state reconstruction:
+- Read final.md, audit.md, codex-ledger.md, run-log.md, and any next*.md,
+  redo*.md, or continuation*.md files in the prior run directory.
+- Inspect the matching .agents/pro-manage/runs/<run-id>/ record if a GPT-pro
+  handoff happened.
+- Treat final.md plus audit.md as the calibrated project state; use
+  gpt-pro-output.md only as raw evidence unless the audit says otherwise.
+- Identify accepted claims, conjectural claims, rejected routes, open proof
+  obligations, source snapshots, remote Project/conversation state, and the
+  next narrow target.
+
+New run directory:
+prompts/<YYMMDDHH-num>/
+
+Requirements:
+- Create a new child run for this continuation.
+- Record `Continuation of: <prior-run-id>` in codex-ledger.md or review.md.
+- Treat the prior run as the complete transcript and evidence package from the
+  previous conversation, not as a checkpoint to resume in place.
+- If reusing the same ChatGPT Project, open a new conversation/chat inside that
+  Project for the new GPT-pro prompt. Do not continue the prior conversation
+  except to retrieve or verify prior output.
+- Do not overwrite, rename, or roll forward the prior run's task.md,
+  materials.md, gpt-pro-input.md, gpt-pro-output.md, audit.md, final.md,
+  handoff.md, or codex-ledger.md.
+- Ask for exactly one lemma, obstruction, assumption check, or proof obligation
+  when the previous audit isolated one.
+- Do not ask GPT-pro for the full theorem until the isolated blocker is
+  resolved.
+- At the end, create this new run's own next.md with the next target, blockers,
+  source requirements, and route state if the project remains nonterminal.
+```
+
 ## Preflight Difficulty Probe Prompt
 
 ```text
@@ -63,6 +107,15 @@ Requirements:
 - Validate task.md and materials.md.
 - Write handoff.md.
 - List exact files and reading order for GPT-pro.
+- List any required direct Project sources separately, especially PDFs named by
+  the user or run manifest, and mark the handoff blocked if those files are not
+  visibly synced as separate Project sources.
+- For continuations that reuse a ChatGPT Project, record
+  `CONVERSATION_MODE: new-project-chat` and require a new conversation/chat
+  inside the Project rather than the prior run's conversation.
+- Include an explicit output completion marker, normally `END_GPT_PRO_OUTPUT`,
+  as the final line GPT-pro should return unless the user forbids changing the
+  prompt text.
 - Run the call-gpt-pro wrapper in DryRun mode if available.
 - Do not add new substantive proof content to the GPT-pro handoff unless it is explicitly labeled as a local sanity check for GPT-pro to audit.
 - Mark status READY_FOR_GPT_PRO or NEEDS_USER_REVIEW.
@@ -87,6 +140,44 @@ Focus:
 - whether the conclusion follows from the supplied materials.
 
 Do not silently repair the proof. Label proposed repairs separately. Codex may apply mechanical formatting fixes and simple proof patches after the audit when the justification is explicit.
+```
+
+## GPT-pro Output Repair Prompt
+
+```text
+Use $proof-orchestrator to repair copied GPT-pro output formatting.
+
+Target:
+prompts/<YYMMDDHH-num>/gpt-pro-output.md
+
+Optional companion files:
+- prompts/<YYMMDDHH-num>/final.md
+- prompts/<YYMMDDHH-num>/audit.md
+- prompts/<YYMMDDHH-num>/codex-ledger.md
+
+Requirements:
+- Preserve GPT-pro's proof order, labels, claims, constants, assumptions, and
+  theorem status.
+- Confirm the expected completion marker, normally `END_GPT_PRO_OUTPUT`, when
+  the handoff requested it.
+- Check balanced `$$` display math delimiters and suspicious blank lines inside
+  display math.
+- Repair large-brace delimiter corruption: `\left{` -> `\left\{` and
+  `\right}` -> `\right\}` when they are delimiter braces. For indicators,
+  repair obvious spacing damage such as `\mathbf 1!\left{` to
+  `\mathbf 1\!\left\{`.
+- Scan for residual web-copy separators such as standalone `====`, `======`,
+  `----`, or longer all-`=` / all-`-` lines. Remove or replace them only when
+  the intended operator is unambiguous from adjacent formula text or a cleaner
+  companion file; otherwise flag the location locally instead of guessing. Do
+  not modify Markdown table delimiter rows like `| --- | --- |`.
+- Scan for common rendered-math artifacts such as stray `#`, `*{...}`, `\sum*`,
+  `\mathbb{E}*`, `\operatorname{...}*`, and malformed right-delimiter
+  fragments.
+- If the user explicitly asks for manual micro-edits or added details, keep them
+  bounded to wording, notation, or directly supported explanatory details. Do
+  not add a new central proof step or silently promote conjectural text to a
+  proved claim.
 ```
 
 ## Redo Prompt
@@ -124,6 +215,7 @@ prompts/<YYMMDDHH-num>/final.md
 
 Requirements:
 - Preserve proved / repaired / conjectural / unsupported labels.
+- Apply the GPT-pro Output Repair checks before final assembly.
 - Apply local mechanical edits, wording repairs, and simple proof patches that are explicitly supported by the audit.
 - If a substantive gap remains, mark the artifact as not ready instead of polishing it into a false proof.
 ```
